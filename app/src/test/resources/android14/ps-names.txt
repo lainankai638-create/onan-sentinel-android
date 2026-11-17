@@ -1,0 +1,8 @@
+  UID   PID NAME
+    0     2 kthreadd
+    0    20 [kworker/u16:0 events_unbound]
+ 1000   100 com.miui.securitycenter
+ 1000   101 com.miui.securitycenter:remote
+ 1000   102 com.miui.securitycenter extra
+101000  103 com.miui.securitycenter
+10000   104 unrelated process name

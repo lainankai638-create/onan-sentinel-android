@@ -1,0 +1,5 @@
+Uid mode: COARSE_LOCATION: foreground
+FINE_LOCATION: foreground
+COARSE_LOCATION: allow; time=+1m2s300ms ago; rejectTime=+2h ago; duration=+500ms
+CAMERA: allow; time=+10s ago (running)
+RECORD_AUDIO: ignore; rejectTime=+3s ago

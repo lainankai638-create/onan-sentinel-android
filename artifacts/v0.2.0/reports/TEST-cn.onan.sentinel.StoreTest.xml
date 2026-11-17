@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="cn.onan.sentinel.StoreTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-11-17T19:57:05" hostname="555aa288b515" time="3.406">
+  <properties/>
+  <testcase name="repeatedDisconnectsDoNotInventGapClosures" classname="cn.onan.sentinel.StoreTest" time="0.065"/>
+  <testcase name="dataSurvivesReopenAndUncleanSessionHasUncertainGap" classname="cn.onan.sentinel.StoreTest" time="0.07"/>
+  <testcase name="databaseAndRowsRemainBoundedUnderLoad" classname="cn.onan.sentinel.StoreTest" time="3.001"/>
+  <testcase name="blockedExportDoesNotBlockRecordingOrStopping" classname="cn.onan.sentinel.StoreTest" time="0.08"/>
+  <testcase name="earlierGapBoundIsPreservedAfterDelayedDisconnectDetection" classname="cn.onan.sentinel.StoreTest" time="0.039"/>
+  <testcase name="transactionFailureDoesNotLeaveHalfSession" classname="cn.onan.sentinel.StoreTest" time="0.052"/>
+  <testcase name="cleanupRefusesActiveSessionAndPreservesMetadata" classname="cn.onan.sentinel.StoreTest" time="0.043"/>
+  <testcase name="exportRedactsPidTargetsAndPreciseTimestamps" classname="cn.onan.sentinel.StoreTest" time="0.054"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

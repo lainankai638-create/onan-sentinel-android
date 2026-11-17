@@ -1,70 +1,88 @@
-# 欧南·系统网络哨兵 0.1.1
+# 欧南·系统网络哨兵 v0.2.0
 
-独立 Android 应用。面向 Redmi K40S、Android 14 和澎湃 OS 1.0.15.0.ULMCNXM。内置两个档案，自动读取设备上的实际版本。
+这是基于用户提供的 v0.1.1 仓库、面向长期监测重构的 **v0.2.0 隔离测试版**，不是已经验证的原应用升级包。
 
-| 档案 | 包名 | 提供的目标版本 |
-|---|---|---|
-| 手机管家 | `com.miui.securitycenter` | `10.5.2-260718.0.1` |
-| 系统安全组件 | `com.miui.guardprovider` | `2.1.5-20240906.0` |
+| 标识 | 本工程 |
+| --- | --- |
+| Kotlin namespace | `cn.onan.sentinel` |
+| APK applicationId | `cn.onan.sentinel.preview` |
+| versionName / code | `0.2.0-preview` / `200` |
+| 最低 / 目标 / 编译 SDK | 26 / 34 / 35 |
+| 目标验收设备 | Redmi K40S，Android 14，HyperOS 1.0.15.0.ULMCNXM |
+| 签名 | 新的测试签名；从未使用或修改旧签名 |
+| 数据库 | 测试包私有目录中的 `sentinel_v020.db`，schema 1 |
 
-## 0.1.1 修复
+## 旧工程检索结果
 
-0.1.0 的安装包缺少 Shizuku Binder 接收入口。本版已补上受系统权限保护的 ShizukuProvider，并在总览显示收到连接、等待授权及只读服务连接等不同状态。
+最初本地及包名搜索未找到工程。用户随后提供公开仓库，现已找回并检查 [lainankai638-create/onan-sentinel-android](https://github.com/lainankai638-create/onan-sentinel-android) 的 `main`，基线提交 `c5b14b5bb2d754015ce087a5cd18fbef3dfd8f91`，版本 `0.1.1` / code `2`。源码、Gradle、Wrapper、Shizuku UserService、SQLite DDL、5 项旧单元测试及历史 `TESTING.md` 均已取得。完整原始快照保存在 `legacy-reference/v0.1.1/`，不参与本次 APK 编译；其中旧安装说明不适用于本次交付。
 
-如果手机已经安装 0.1.0，先导出想保留的记录，再卸载旧版并安装新版。旧版的调试签名密钥未保留，本版使用新的调试签名，无法覆盖安装。卸载会清除旧版的本地数据库，已导出到手机文件夹的报告可继续查看。
+**仍缺失**：v0.1.0 独立源码、旧 APK 实物、可用于更新现装版本的签名密钥/证书指纹、真实数据库样本及原始构建日志。旧版 README 明确声明 v0.1.0 调试密钥未保留，v0.1.1 使用过新的调试签名。历史 TESTING.md 的构建成功和 APK hash 仅作为既有记录，不能当成本次重测结果。没有覆盖旧应用、卸载旧包、清理旧数据库、重新签署旧 APK，也没有对真实手机执行安装。
 
-## 手机上怎么用
+旧库为 `evidence.db` schema 1。本版新增独立 `sentinel_v020.db`，保留旧库不迁移、不修剪；提供只读结构/行数检查。隔离包不能跨 Android 沙箱读取旧包数据。使用旧 DDL 的合成样本测试只能证明结构兼容与保留策略，不能证明现装旧版升级已通过。旧抓包/CSV/PCAP/附原始文件导出和 JobScheduler 页面被留在参考快照，本次 APK 聚焦用户要求的长期只读监测，不暴露这些入口。
 
-1. 打开 APK 安装并启动。安装器如提示，请按手机上的安装来源提示操作。APK 使用调试签名，用于这一版本的手机试装。
-2. 保持快连运行。在总览打开「使用情况访问设置」，授权本应用。切到「组件」，打开手机管家或系统安全组件，点「立即记录流量快照」。总览可预约约每 15 分钟的后台 UID 流量采样，执行时间由 Android 调度。停止采样可在总览操作。
-3. 在 Shizuku 中确认服务已启动，返回总览选择「连接 Shizuku」。打开目标组件详情，点「记录后台进程快照」。在执行测试安装、更新或安全扫描时，也可以用「标记刚发生的事件」记录时间。
-4. 深度抓包时，自行停止快连，进入对应档案的「针对该组件分析」，确认后请求 PCAPdroid 聚焦抓包。用「查询 PCAPdroid 抓包状态」检查，并在 PCAPdroid 确认筛选的目标。采集结束后，在 PCAPdroid 停止抓包，从连接页面导出 CSV，再回哨兵选择「导入 PCAPdroid 连接 CSV」。日常模式无需切换 VPN。
-5. 若已有经典 PCAP，可在对应档案中导入。建议对照同会话的 PCAPdroid CSV 来判断连接的包或 UID。离线 PCAP 会显示源和目的端点、端口、协议、包数与帧字节。经典 PCAP 的方向是包里的源到目的，设备侧上下行、远端、所属应用都需要另找证据。
-6. 到「报告」选组件和时间段，预览脱敏结果后保存 Markdown 或 JSON。需要附带原始抓包时，预览对话框选「其他导出」，再选 PCAP 或 PCAPNG，保存包含报告和原始文件的 ZIP。保存时可选择手机本地目录。原始文件会保留抓包内容，报告脱敏不会修改附件。
-7. 自行选定要交给 GPT 的文件。界面可调整保留期限或清除 SQLite 中全部记录。已经保存到外部位置的文件需要在原位置管理。
+正式使用 `cn.onan.sentinel` 前，必须取得旧代码/数据库结构和原签名，编写明确迁移并在备份副本上验收。不要直接修改 applicationId 后安装，也不要为解决签名冲突卸载旧版。
 
-## 权限及兼容性
+## 已实现的边界
 
-| 接口或权限 | 用途与边界 |
-|---|---|
-| 使用情况访问 | `NetworkStatsManager` 查询指定 UID 的 Wi-Fi、移动网络当天累计字节。系统统计可能延迟、分桶粗、无可用数据或受 VPN 记账影响。同 UID 多包只提供一份聚合值。 |
-| 网络状态 | 观察系统向本应用可见的 VPN 网络。发现活动 VPN 会拦住启动抓包；请求前仍须确认，因为网络可见性和同时切换存在限制。 |
-| Shizuku | 用公开 UserService 执行固定的只读 `ps`。仅回传匹配目标包名前缀的进程行；进程快照只覆盖采样当时。MIUI 的 shell 输出和 Shizuku 状态可能影响结果。 |
-| PackageManager | 查看可见包的版本、UID、最近安装更新、声明权限及授权标志。默认两包通过 manifest 声明可见。自定义包可能不可见，且同 UID 可见包列表可能不完整。 |
-| PCAPdroid | 使用公开 Activity 接口请求本地 VPN 抓包及查询状态，指定 `app_filter`，关闭 TLS 解密和自动阻止私有 DNS。实际抓包范围以 PCAPdroid 和系统行为为准。 |
-| 系统文件选择器 | 仅访问用户选定的输入文件和输出位置。应用本身未声明互联网权限。 |
-| 设备重启和强制停止 | 后台定时任务应重新开启。系统省电策略可延后任务。流量快照与进程快照使用各自采集来源。 |
+- 用户手动启动的 Android 前台服务，持续发布运行通知，可暂停、恢复、停止；没有开机自启、隐藏后台启动或系统限制绕过。
+- Shizuku Binder 回调与运行时授权检查；仅接受 ADB shell UID 2000，拒绝 root 模式。
+- Shizuku UserService 只接收两个枚举整数。固定只读命令为 `ps -A -w -o UID,PID,NAME` 和 `cmd appops get --user 0 <固定目标>`，不经过 `sh -c`。进程结果按数值 UID 过滤主用户，其他用户/第二空间不会归入 user 0。
+- 固定目标：`com.miui.securitycenter`、`com.miui.guardprovider`、`com.miui.powerkeeper`。新增目标需要修改源码白名单并重编译；UI 不提供任意命令或任意包名输入。
+- 默认 5 分钟采样，可选择 1 / 5 / 15 分钟。每 15 秒检查连接；暂停时不采样。单命令超时 4 秒，Binder 等待上限 7 秒，输出上限 64 KiB。用户暂停/停止后不保存在途结果。
+- 进程样本只保存匹配目标的 PID。`NOT_OBSERVED_IN_PS` 仅表示该次可见列表未出现，不能证明进程绝对不存在。PID 变化是观察到的变化，不等于精确进程启动时间或恶意活动。
+- AppOps 仅解析可识别的操作模式，区分 UID / package 行，状态标为 `PARTIAL`。不保存归因标签、原始命令输出或相对访问时间；因此只能比较模式变化，不能还原完整调用历史、读取内容或判断数据外传。
+- SQLite 保存墙钟时间、单调时间、目标、事件类型、来源、状态和证据；支持异常、启动/观察时间线、证据筛选和 JSONL 导出。
+- 数据库主文件上限 32 MiB、最多 20,000 条，约 24 MiB 使用量或行数到阈值时删除较旧记录；回滚日志可能临时占额外空间。清理必须停止监控并手动确认；不会操作旧包数据。
+- 无 INTERNET、音频、短信、通话、位置、外部存储读取权限；不自动上传、不接入分析 SDK、不抓包、不注入、不拦截 TLS。
 
-UID 统计只适合在同一天内比较连续快照。Wi-Fi 和移动网络分别记录，缺桶显示为无可用数据。CSV 会话按连接首次观测时间筛选，整条连接的计数可能跨出区间。导入同一文件两次会得到两个会话。普通 PCAP 流以有方向的 IP/端口/协议组合归并，同一组合重复使用也会归在一起。IPv6 扩展头之后的端口当前不解析。CSV 主机名来自 PCAPdroid 的 Info，来源可能是 DNS、TLS 或其他可见元数据。域名缺失和共享 UID 均不代表没有联网。
+## 空白期与真实性
 
-## 功能状态
+`GAP_BEGIN` / `GAP_END` 表示采集不可用区间。连接丢失、授权缺失、暂停、停止、调度延迟、全部证据源失败均有状态记录。各目标/证据源独立失败也保留不可用样本。恢复后重新建立基线，不跨空白期伪称连续变化。
 
-| 状态 | 功能 |
-|---|---|
-| 已实现 | 五个页面、独立档案、定时及手动 UID 流量快照、手动 Shizuku 进程快照、手动事件标记、按组件和时间筛选 |
-| 已实现 | 发起 PCAPdroid 聚焦抓包、查询状态、离线导入 PCAPdroid CSV 和经典 PCAP、会话归档、最近记录 |
-| 已实现 | Markdown、JSON、含原始抓包的 ZIP，预览、默认端点脱敏、本地保留和删除 |
-| 已实现 | 从同一 CSV 会话寻找重复间隔与连接开始时段的峰值线索，证据按已确认、推测、无法获取展示 |
-| 未实现 | 进程启动、停止与服务活动的连续自动记录，系统扫描自动识别，已验证的反诈功能识别 |
-| 未实现 | PCAPNG 离线解析、原始 PCAP UID/应用扩展解析、哨兵内主动 TLS SNI/DNS 解析、CSV 格式报告输出 |
-| 待实机验证 | 小米两包的 UID 归属及真实包量、澎湃系统对定时任务和 Shizuku 的限制、PCAPdroid 实装版本的接口及停抓后的快连恢复 |
+本进程被系统直接杀死时无法在死亡瞬间写入数据库。下次打开时，若发现未关闭会话，记录 `UNCLEAN_STOP_DETECTED`，以最后持久化采样时间作为空白期起点的保守下界，并明确实际停止时刻未知。尚未重新打开时数据库仍可能保留未关闭会话，不能解释为还在运行。
 
-比较两个时间段时，分别选择区间导出报告，再按 CSV 会话统计对照。保留日期、时区和采样覆盖，避免把整条连接或 UID 累计值当作精确的区间字节。
+没有持有长期唤醒锁。Doze、HyperOS 保活策略、用户强制停止和无线调试关闭均可能中断采样。前台服务不保证 24 小时连续运行；Android 14 用户也可以关闭/隐藏通知。通知被禁用后检查到即停止。若磁盘/SQLite 写入失败，停止采集并通过运行状态/通知显示错误，不静默重建库。
 
 ## 构建
 
-需要完整 JDK 17 或 21、Android SDK Platform 35、Build Tools 34.0.0 和 Gradle Wrapper。设置 `ANDROID_HOME`，然后运行：
+环境：完整 JDK 17、Android SDK platform 35、Build Tools 34.0.0、Gradle 8.9（Wrapper）、AGP 8.7.3、Kotlin 2.0.21、Shizuku API/provider 13.1.5。首次构建需要访问 Google Maven、Maven Central 和 Gradle 分发站点。
 
-```bash
-./gradlew :app:assembleDebug :app:testDebugUnitTest
-```
+1. 安装 Android Studio 或 Android command-line tools，并接受 SDK 许可：
 
-APK 输出 `app/build/outputs/apk/debug/app-debug.apk`。构建与验证记录见 `TESTING.md`。
+   ```sh
+   sdkmanager "platforms;android-35" "build-tools;34.0.0" "platform-tools"
+   ```
 
-## 参考
+2. 通过 `ANDROID_HOME` 指向 SDK，或在本地创建 `local.properties`（不包含在交付中）：
 
-- [Android NetworkStatsManager](https://developer.android.com/reference/android/app/usage/NetworkStatsManager)
-- [Android VpnService.Builder](https://developer.android.com/reference/android/net/VpnService.Builder)
-- [Shizuku API 开发指南](https://github.com/RikkaApps/Shizuku-API)
-- [PCAPdroid 调用接口](https://github.com/emanuele-f/PCAPdroid/blob/master/docs/app_api.md)
-- [PCAPdroid CSV 实现](https://github.com/emanuele-f/PCAPdroid/blob/master/app/src/main/java/com/emanuelef/remote_capture/adapters/ConnectionsAdapter.java)
+   ```properties
+   sdk.dir=/your/path/to/Android/sdk
+   ```
+
+3. 仅第一次为隔离测试包生成本地测试密钥，后续构建保留此文件。不要使用原版密钥：
+
+   ```sh
+   mkdir -p .local-signing
+   keytool -genkeypair -keystore .local-signing/debug.keystore -storepass android -keypass android -alias androiddebugkey -dname "CN=Android Debug,O=Android,C=US" -keyalg RSA -keysize 2048 -validity 3650
+   ```
+
+4. 构建和检查：
+
+   ```sh
+   ./gradlew --no-daemon :app:assembleDebug :app:testDebugUnitTest :app:lintDebug :app:assembleDebugAndroidTest
+   ```
+
+   Windows 使用 `gradlew.bat`。APK 位于 `app/build/outputs/apk/debug/app-debug.apk`；单元测试 HTML 位于 `app/build/reports/tests/testDebugUnitTest/index.html`。Release 不配置任何签名，不能当作原版升级包。
+
+测试代码中的 Robolectric 使用 Android 14 框架与 native SQLite；这是主机测试，不是实机运行。`StoreInstrumentedTest` 会清理 **preview 包** 的测试数据，仅在专用测试设备/模拟器运行。
+
+## 手机上使用
+
+1. 保留 v0.1.0。安装隔离 APK，确认包名以 `.preview` 结尾。
+2. 在 Shizuku 中用无线调试启动服务；不要用 root 模式。
+3. 打开“欧南·网络哨兵（隔离测试）”，点击授权 Shizuku，再允许通知，再点击启动。
+4. 查看来源状态及证据。某组件不存在、命令格式不同或权限受限时，应显示失败原因，不应补造结果。
+5. 导出通过系统文档选择器由用户选择目的地。报告包含分钟级时间、目标别名、操作模式和空白期；删除 PID 和精确时间，但不保证完全匿名。选择本地目录可避免用户所选云文档提供商自行同步。
+6. 停止并确认后可清理本测试包历史。自动保留策略也会删除旧记录，需要长期留存时手动导出。
+
+详见 `docs/ARCHITECTURE.md`、`docs/DEVICE_ACCEPTANCE.md` 和交付测试报告。不能将主机测试或模拟时间跨度当作 24 小时实机验收。

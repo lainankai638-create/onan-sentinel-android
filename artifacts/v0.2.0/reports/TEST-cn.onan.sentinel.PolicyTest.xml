@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="cn.onan.sentinel.PolicyTest" tests="9" skipped="0" failures="0" errors="0" timestamp="2026-11-17T19:57:09" hostname="555aa288b515" time="0.033">
+  <properties/>
+  <testcase name="appopsUnknownOutputNeverBecomesEmptySuccess" classname="cn.onan.sentinel.PolicyTest" time="0.01"/>
+  <testcase name="processNamesMatchBoundaryAndIncludeSubprocess" classname="cn.onan.sentinel.PolicyTest" time="0.01"/>
+  <testcase name="fixedCommandsContainNoInterpreterOrMutation" classname="cn.onan.sentinel.PolicyTest" time="0.001"/>
+  <testcase name="emptyOrMalformedProcessListingIsNotAbsence" classname="cn.onan.sentinel.PolicyTest" time="0.001"/>
+  <testcase name="appopsDropsPrivateAttributionAndRelativeTimes" classname="cn.onan.sentinel.PolicyTest" time="0.002"/>
+  <testcase name="invalidCommandsRejected" classname="cn.onan.sentinel.PolicyTest" time="0.001"/>
+  <testcase name="baselineInvalidatedAfterUnavailableSample" classname="cn.onan.sentinel.PolicyTest" time="0.0"/>
+  <testcase name="twentyFourHourSimulationDoesNotClaimDeviceUptime" classname="cn.onan.sentinel.PolicyTest" time="0.007"/>
+  <testcase name="absenceOnlyMeansNotObserved" classname="cn.onan.sentinel.PolicyTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

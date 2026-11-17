@@ -1,0 +1,3 @@
+<resources>
+    <string name="redact_endpoints">脱敏 IP、域名及其他包名</string>
+</resources>

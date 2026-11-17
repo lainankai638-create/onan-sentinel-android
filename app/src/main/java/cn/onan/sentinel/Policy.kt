@@ -28,7 +28,8 @@ object Parsers {
             return Evidence("UNSUPPORTED", "PS_FORMAT_UNKNOWN")
         val matches = mutableListOf<String>()
         for (line in lines.drop(1)) {
-            val columns = line.trim().split(Regex("\\s+"))
+            // NAME is argv[0], which may contain spaces; only UID and PID are separate fields.
+            val columns = line.trim().split(Regex("\\s+"), limit = 3)
             if (columns.size != 3 || columns[0].toIntOrNull() == null || columns[1].toIntOrNull() == null)
                 return Evidence("UNSUPPORTED", "PS_FORMAT_UNKNOWN")
             if (columns[0].toInt() in 0..99999 && (columns[2] == target || columns[2].startsWith("$target:"))) {
@@ -44,12 +45,23 @@ object Parsers {
             return Evidence("DENIED", "APPOPS_PERMISSION_DENIED")
         if (raw.contains("Unknown package", true) || raw.contains("No UID", true))
             return Evidence("UNAVAILABLE", "TARGET_NOT_AVAILABLE_FOR_USER_0")
-        if (raw.trim() == "No operations.") return Evidence("OK", "NO_RECORDED_OPERATIONS")
+        val lines = raw.lineSequence().map { it.trim() }.filter { it.isNotEmpty() }.toList()
+        if ("No operations." in lines) {
+            if (lines.size == 1) return Evidence("OK", "NO_RECORDED_OPERATIONS")
+            // AOSP adds this for a query of one op. Its name is not in the output: do not infer it.
+            val defaultMode = if (lines.size == 2 && lines[0] == "No operations.")
+                Regex("Default mode: (allow|ignore|deny|default|foreground|errored|ask)").matchEntire(lines[1])
+            else null
+            return if (defaultMode != null)
+                Evidence("PARTIAL", "NO_RECORDED_OPERATIONS\nREPORTED_DEFAULT_MODE=${defaultMode.groupValues[1]}")
+            else Evidence("UNSUPPORTED", "APPOPS_FORMAT_UNKNOWN")
+        }
         val values = sortedSetOf<String>()
         val op = Regex("^\\s*(?:Uid mode:\\s*)?([A-Z][A-Z0-9_]{0,79}):\\s*(allow|ignore|deny|default|foreground|errored|ask)(?:[;\\s].*)?$", RegexOption.IGNORE_CASE)
         for (line in raw.lineSequence()) {
             val m = op.matchEntire(line) ?: continue
-            val scope = if (line.trimStart().startsWith("Uid mode:", true)) "UID" else "PACKAGE"
+            // AOSP prefixes only the first UID row; subsequent UID/package rows are ambiguous.
+            val scope = if (line.trimStart().startsWith("Uid mode:", true)) "UID" else "UNSCOPED"
             // Relative timestamps change on every poll; deliberately exclude them from comparisons.
             values += "$scope:${m.groupValues[1].uppercase()}=${m.groupValues[2].lowercase()}"
         }

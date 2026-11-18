@@ -1,63 +1,69 @@
-# v0.3.0 P0 候选版测试报告
+# v0.3.0-preview.1 测试报告
 
-日期：2026-11-18（Asia/Shanghai）。基线：`0a4b12fca2a23c56564ed6134a2c1f805e69afad`；按用户指定公开分支：`codex/v0.3.0`（本地初始实现分支名为 `codex/v0.3.0-p0`）。结论：**P0 代码与主机回归已完成本轮验证；v0.3.0 全功能、实机升级与 24h 退出验收未完成，不可视为正式发布。**
+日期：2026-11-18（Asia/Shanghai）。稳定基线 PR #2：`98e24b454dfc7912b4203a73859485ebe8a20f07`。本轮分支 `codex/v0.3.0-features`。**候选功能已实现并通过以下限定验证；Redmi K40S、24h 与耗电退出验收未完成，保持 Draft。**
 
-## 执行与证据分层
+## 执行结果与证据层级
 
-| 项目 | 实际执行并通过 | 静态审查 | 模拟或构造输入 | 尚未实机执行 |
-| --- | --- | --- | --- | --- |
-| 构建 | assembleDebug、assembleDebugAndroidTest 成功 | manifest 权限/版本核对 | 不适用 | 安装与用户操作 |
-| 测试 | 52 项，0 失败/错误/跳过 | 新旧状态与库边界复查 | JUnit + Robolectric Android 34/native SQLite，假 Shizuku 适配器 | 真实 Shizuku Binder/HyperOS |
-| 来源空白期 | 单源恢复、权限/格式失败、停止拥有者隔离通过 | 来源×目标六组合、原全局字段兼容 | 合成时间/证据样本 | 真实断连、撤权、休眠与重启 |
-| 迁移 | 6 项迁移测试通过 | SQLiteOpenHelper 升级事务、私有备份、保留规则 | 原 schema DDL，20,000 行数据，空间探针拒绝、事务异常、未知 schema | 用户真实 DB、物理断电、真实磁盘耗尽、恢复演练 |
-| 有界调用 | 4 项安全控制 + 4 项桥接测试通过 | 两个共享零队列线程池、代次与授权校验 | 忽略中断的假调用、迟到回调、假授权/重连 | 目标机线程/内存长期曲线 |
-| 导出/存储故障 | 阻塞 Writer 不持 DB 锁、失败临时文件清理、满页事务回滚通过 | 游标/临时快照分块输出 | Writer 故障、max_page_count 限制 | 实际 SAF 提供商、大文件设备性能 |
-| Lint | 0 errors / 7 warnings | 见完整 lint-results-debug.txt | 不适用 | UI/无障碍实机验收 |
-| 24h/耗电 | 未执行 | 已提供方案与记录字段 | 原合成 24h 基线测试仍只测逻辑 | 全部真实对照试验 |
+| 项目 | 实际执行结果 | 构造输入 / 静态检查 | 尚待目标机 |
+| --- | --- | --- | --- |
+| APK / 构建 | assembleDebug、assembleDebugAndroidTest 成功；Lint 0错误 / 9警告 | JDK17、Gradle8.9、AGP8.7.3、Kotlin2.0.21；日志在附件 | HyperOS安装及运行 |
+| 主机测试 | **91项通过，0失败/错误/跳过**；原52项全部复跑，新增39项 | JUnit + Robolectric API34/native SQLite；假Binder、构造格式/库/桶/权限 | 不把这些算实机验证 |
+| 八页 UI | Android14 AOSP x86_64 模拟器，真实 APK 导航测试通过，八页截图 | 页面标题/入口/按钮，真实本地状态，无演示数据注入 | K40S交互、TalkBack、流畅度 |
+| 屏宽/字号 | **最终APK六组全部通过，48张实际截图** | 320/360/393dp，各1×浅色与2×深色；八页导航及无文字省略断言 | 字体/厂商渲染、触摸与辅助功能 |
+| 进程快照 | 官方 Shizuku 13.6.0，ADB shell UID2000；**最终APK实际返回263项可见进程**，UI显示采样成功（较早构建为262项） | UID/包多归属、用户/双开、未知格式、输出边界、复用一次ps与代次测试 | HyperOS实际列表、AppOps输出、后台持续性 |
+| NetworkStats | 在临时模拟器授予Usage Access后实际查询自身UID；Wi-Fi/移动网络均**无桶**，UI显示不可用，非零值 | 12项覆盖禁用、无权限、空桶/真零、共享UID、溢出/负数、取消/重新启用/撤权 | 真实非零流量、共享系统UID、VPN开/关与系统同口径对照 |
+| 覆盖升级 | 模拟器 P0 code300 → code301 使用 `adb install -r`；schema2不变；**32条旧事件逐字段一致**，新启动后34条；最终APK查询后38条仍保留原32条，quick_check=ok | 原schema1→2的6项迁移回归全部通过 | 用户手机证书与真实历史尚未取得，不能宣称已验证 |
+| 报告 | 半开范围、目标/来源、有效采样间隔、闭合会话、gap交集、时钟倒退、ZIP/JSONL有效性、脱敏与失败清理主机测试通过 | 任意原始文本不进入新报告；外部提供商写入不持DB锁 | 真实历史对照、系统文件选择器保存/取消与不同提供商 |
+| 24h / 耗电 / Doze | **未执行** | 不用合成时间或模拟器代替真实24h | 三组真实设备对照；电池、温度、网络、VPN条件记录 |
 
-完整任务：`:app:assembleDebug :app:testDebugUnitTest :app:lintDebug :app:assembleDebugAndroidTest`，最终日志 `BUILD SUCCESSFUL in 1m 2s`。这不是 24 小时运行时间。最终测试 XML 时间戳约为北京时间 12:54，原 XML 使用 UTC；每项耗时保留在 XML。没有独立目标设备实验起止记录。
+所有模拟器操作都指定 `emulator-5554`；没有连接或操作用户手机，没有卸载、清理手机SQLite或更改手机VPN。测试器只执行 `UiAcceptanceTest` 与 `LiveSourcesTest`，**未运行会清库的旧 StoreInstrumentedTest**。临时模拟器的字体/显示/动画和 Usage Access 配置只用于测试，不进入产品代码。
 
-## 测试组成
+## 主机逐组结果
 
-| 测试类 | 通过数量 | 验证内容 |
-| --- | --- | --- |
-| PolicyTest | 9 | 原白名单、解析/脱敏、基线、合成时间循环 |
-| Android14FormatTest | 9 | 原 Android 14 文本格式回归，非厂商实机样本 |
-| LegacyCompatibilityTest | 3 | 原版 evidence.db 合成样本只读、不修改/不创建 |
-| StoreTest | 8 | 原持久化、事务、空白期、保留、阻塞导出、脱敏 |
-| CollectionSafetyTest | 4 | 代次、暂停/停止丢弃、100 次重试不新增假调用、单通道隔离 |
-| ShizukuBridgeTest | 4 | 旧回调、授权撤销、恢复/超时退避、拒绝 root/无授权绑定 |
-| MigrationTest | 6 | 旧值/备份、满行数、空间不足、失败回滚/重试、未知结构/版本、自增高水位 |
-| SourceCoverageTest | 7 | 分来源恢复、起点语义、保留上限、统计时钟回退、导出失败、SQLite 满页回滚、旧 Service 退出隔离 |
-| FailureReasonTest | 2 | 保留可行动错误码；拒绝泄露任意异常文本 |
+| 测试组 | 通过项数 | 输入与目的 |
+| --- | ---: | --- |
+| PolicyTest | 9 | 固定命令/目标与模式解析 |
+| Android14FormatTest | 9 | No operations + Default mode、AOSP输出与不支持分支 |
+| LegacyCompatibilityTest | 3 | 原始数据库只读边界 |
+| StoreTest | 8 | 持久化、事务、容量、取消导出与不阻塞写入 |
+| CollectionSafetyTest | 4 | 迟到结果、无响应调用、暂停/恢复代次 |
+| ShizukuBridgeTest | 4 | 连接/授权/重试假适配器 |
+| MigrationTest | 6 | schema1→2、逐字段保留、拒绝未知结构、备份/空间 |
+| SourceCoverageTest | 7 | 独立来源状态与空白期 |
+| FailureReasonTest | 2 | 存储失败原因 |
+| VisibleFeaturesTest | 24 | 快照/归属/中文/批次复用/调用交接/分页/报告/PID证据长度 |
+| NavigationTest | 3 | 四入口八页真实控件、明确的空状态与限制 |
+| NetworkExperimentTest | 12 | 能力、权限、桶边界、UID去重、失效结果丢弃 |
+| 合计 | **91** | 原52 + 新39；逐条XML及机器可读清单在 reports/ |
 
-原有 29 项重新执行，新增 23 项；不是沿用旧结果。SQLite 满页使用 `PRAGMA max_page_count` 注入限制，不是填满宿主磁盘；升级中断通过事务中抛异常模拟，不是真实断电。旧库样本是合成数据，不含用户私人记录。
+## 本轮发现并修复
 
-## 构建环境与 APK
+- 首轮 Lint 检出菜单数字ID、常量及API26主题属性问题：改为资源ID、Material常量并去掉仅API27可用的属性。QUERY_ALL_PACKAGES 和 PACKAGE_USAGE_STATS 是实现所需的明确能力，在 Manifest 局部解释 Lint 例外，不关闭全局检查。
+- 连续网络查询回归暴露 BoundedCallLane 的任务已返回但 busy 尚未释放竞态：增加完成同步及单个交接槽。执行中的任务仍以 busy 门禁拒绝新任务；超时未响应中断时不继续排队。新增立即连续成功/失败调用回归。
+- 网络实验在关闭、离屏或重新开启后，旧 ticket 不可再显示或写入；共享 UID 只查询一次/网络类型。空桶保持 null 计数，不伪造0。
+- 超过4096字符的组件PID证据整次标为不可用，避免后续入库截断被误读为完整列表；新增1001个PID的边界回归。最终APK只在前一截图构建上加入这一证据长度检查，UI源码未改。
 
-Linux x86_64；完整 JDK 17；Gradle 8.9（Wrapper）、AGP 8.7.3、Kotlin 2.0.21；SDK platform 35 / Build Tools 34.0.0；Shizuku API/provider 13.1.5。直接依赖版本固定，Wrapper 分发 SHA-256 固定；尚未引入完整传递依赖校验锁文件，不宣称构建可逐字节复现。
+Lint 的9条警告为目标SDK34（按Android14设备范围）、4条依赖更新提示、旧API备份兼容提示及3条可用磁盘空间建议。未为清除提示而扩大目标平台或自动清理其他应用缓存。
 
-- 包名：`cn.onan.sentinel.preview`；版本：`0.3.0-p0-preview` / code 300；min 26 / target 34。
-- APK SHA-256：`7c81f8b07be32121afb93e6b0093d2db5301329ca021539206ca0cc501966b0f`。
-- 证书 SHA-256：`22b00efcde1f683588919a99893917074063928ba845bea6fa9af2a70cace4ce`，与 v0.2.0 交付一致，未改变签名。
-- APK 与源码 ZIP、逐项测试 XML、Lint、构建日志、签名/权限/ZIP 对齐输出、SHA256SUMS 放在 `artifacts/v0.3.0-p0/`。
-- Lint 7 项警告：目标 API 34 非最新版、两个测试依赖可升级、旧 API 备份声明提示、动态中文字符串提示、两项 UsableSpace 建议。空间检查采用保守可用空间，不自动回收其他缓存；这些警告未作为实机通过证据。
-- 仪器测试 APK 仅构建，未执行 connectedAndroidTest。未连接/安装任何用户手机；未替换原版应用或操作真实数据库。
+## 模拟器限制与实际失败记录
 
-## 实现与剩余门槛
+宿主没有 `/dev/kvm`，使用官方API34默认x86_64镜像、软件CPU/SwiftShader。启动约323秒，构建并发期间出现过 **System UI / Process system ANR**；P0冷启动UserService也发生过连接超时，形成真实空白期。没有掩盖这些记录，也没有据此声称目标机性能合格。
 
-已实现：绑定代次/恢复退避、失效结果拒收、探针线程/排队上限、来源独立状态/空白、事务迁移前校验备份、失败可见、旧记录来源标记、清理记账、流式脱敏导出与保留范围统计。
+首次360dp浅色仪器测试在宿主重新构建期间被Android以 `timeout publishing content providers` 终止，结果为 `Process crashed`，没有布局断言结果；原始失败及上下文保存在 `reports/initial-attempts/`。停止并发构建、更新最终APK后重跑，不把失败尝试删除或计为通过。
 
-尚未达到的 P0 验收门槛：目标机升级、真实 Binder/撤权/通知/Doze、实际磁盘与掉电故障、24h/耗电对照。现有主机测试不能证明这些通过。等待实机反馈；出现问题继续修复，不合并 main。用户上传研究文档的“初步实机观察”没有对应实验数据，本报告不提升为独立复验。
+待宿主构建结束后，候选版八页导航通过；实际Shizuku快照测试通过。实时来源仪器测试耗时115.03秒（包含软件模拟器冷启动等待），不是采样延迟基准。没有小米securitycenter/guardprovider/powerkeeper，因此不可能在该模拟器验证这些组件的真实访问或流量。
 
-完整中文导航/八页面、进程归属增强、NetworkStats、范围 Markdown 报告不在本轮 P0；敏感访问、跳转调查与抓包均未加入。详见 [P0 设计](docs/V030_P0_DESIGN.md) 和 [实机验收表](docs/V030_P0_ACCEPTANCE.md)。
+最终APK另行执行 `LiveSourcesTest` 通过，耗时118.643秒，实际快照263项；两个网络类型均为NO_BUCKETS。原始日志 `reports/live-sources-final.log`，实际截图/结果文字 `screenshots/live-final/`。网络非零流量与VPN对照仍未验证。
 
-## 升级数据边界
+## 版本与校验
 
-迁移事务保留原 events/meta 值及自增高水位，新增表不回填过去事件事实。迁移后的异常会话恢复与新采样会继续容量淘汰规则，因此满额库在后续写入时可能清理历史并留下 retention_log；私有迁移备份仍保留原 schema 1 数据。该备份只在用户停止监控并明确删除时清理。不能直接用 v0.2.0 降级打开 schema 2，不提供自动卸载/重置作为回退。
+- applicationId：`cn.onan.sentinel.preview`；versionName：`0.3.0-preview.1`；versionCode：301；schema：2。
+- 签名证书SHA-256：`22b00efcde1f683588919a99893917074063928ba845bea6fa9af2a70cace4ce`，与此前交付P0实物一致；用户手机已安装证书未直接提取。
+- APK SHA-256：`b15962c055d7e01588709724186dede3431f36928d4408a22df4048a1f0d4ab3`。
+- 包含 APK、仪器测试APK、源码ZIP、逐项XML/JSON、构建/Lint日志、升级比对与实际截图：[证据目录](artifacts/v0.3.0-preview.1)。最终文件校验见该目录 SHA256SUMS。
 
-## 公开推送前复核
+## 独立验收入口
 
-本次推送准备仅更新分支名称、兼容性说明和交付校验清单，未改变生产代码或 APK，未把已有 52 项结果描述成重新跑过。已重新校验全部测试 XML、构建日志、交付文件 hash，以及 v0.2.0/v0.3.0 两份 APK 的包名和签名。原 events/meta/index DDL 与 v0.2.0 基线一致。
+[阶段验收与明确未实现内容](docs/V030_VISIBLE_ACCEPTANCE.md)；[兼容与隔离测试方案](docs/V030_COMPATIBILITY_REVIEW.md)。如手机签名不一致，保留安装和数据库，使用专用模拟器或测试设备；不要求卸载解决。实际访问记录、动态增加关注对象、抓包、云同步与AI控制没有实现，不把路线图或静态页面当作成果。
 
-**当前手机的已安装证书与真实数据库没有提供，因此真实历史数据迁移仍为未验证。** 现有 6 项迁移测试使用原 schema 的合成样本。详细结论与签名不兼容时的专用设备/模拟器隔离方案见 [V030_COMPATIBILITY_REVIEW.md](docs/V030_COMPATIBILITY_REVIEW.md)，机器可读复核结果见 `artifacts/v0.3.0-p0/reports/delivery-review.json`。
+屏宽/字号最终矩阵：320dp浅色1×、320dp深色2×、360dp浅色1×、360dp深色2×、393dp浅色1×、393dp深色2×，**6/6通过**；每组检查8个页面，共48张截图。位置 `screenshots/final-matrix/`，每组保留独立原始仪器日志。自动断言验证入口/标题及TextView无省略；人工检查了总览、报告及大小字号样本。它不替代K40S实机触摸/TalkBack验收，也不是UI流畅度基准。

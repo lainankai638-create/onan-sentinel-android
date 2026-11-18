@@ -1,0 +1,9 @@
+package: cn.onan.sentinel.preview
+uses-permission: name='android.permission.FOREGROUND_SERVICE'
+uses-permission: name='android.permission.FOREGROUND_SERVICE_SPECIAL_USE'
+uses-permission: name='android.permission.POST_NOTIFICATIONS'
+uses-permission: name='moe.shizuku.manager.permission.API_V23'
+uses-permission: name='android.permission.QUERY_ALL_PACKAGES'
+uses-permission: name='android.permission.PACKAGE_USAGE_STATS'
+permission: cn.onan.sentinel.preview.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
+uses-permission: name='cn.onan.sentinel.preview.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION'

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="cn.onan.sentinel.Android14FormatTest" tests="9" skipped="0" failures="0" errors="0" timestamp="2026-11-18T11:17:58" hostname="386ecc2d0c58" time="0.095">
+  <properties/>
+  <testcase name="vendorExtensionsRemainPartialAndDoNotLeakRawDetails" classname="cn.onan.sentinel.Android14FormatTest" time="0.065"/>
+  <testcase name="reportedDefaultChangeIsComparedAndUnknownOutputResetsBaseline" classname="cn.onan.sentinel.Android14FormatTest" time="0.006"/>
+  <testcase name="processNameMayContainSpacesWithoutInvalidatingOtherRows" classname="cn.onan.sentinel.Android14FormatTest" time="0.002"/>
+  <testcase name="vendorHeadersNamesAndTruncationAreNotGuessed" classname="cn.onan.sentinel.Android14FormatTest" time="0.0"/>
+  <testcase name="errorsTakePriorityOverEmptyMarker" classname="cn.onan.sentinel.Android14FormatTest" time="0.0"/>
+  <testcase name="aospUidPrefixDoesNotIdentifyUnprefixedRowsAsPackageModes" classname="cn.onan.sentinel.Android14FormatTest" time="0.002"/>
+  <testcase name="defaultModesAndWhitespaceAreNormalized" classname="cn.onan.sentinel.Android14FormatTest" time="0.012"/>
+  <testcase name="noOperationsWithReportedDefaultIsRecognizedWithoutInventingAnOp" classname="cn.onan.sentinel.Android14FormatTest" time="0.001"/>
+  <testcase name="emptyMarkerCannotHideUnknownOrContradictoryOutput" classname="cn.onan.sentinel.Android14FormatTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

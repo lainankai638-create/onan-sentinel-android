@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="cn.onan.sentinel.VisibleFeaturesTest" tests="24" skipped="0" failures="0" errors="0" timestamp="2026-11-18T11:18:17" hostname="386ecc2d0c58" time="1.345">
+  <properties/>
+  <testcase name="truncatedDuplicateAndNegativePidsAreNotSuccessfulSnapshots" classname="cn.onan.sentinel.VisibleFeaturesTest" time="0.068"/>
+  <testcase name="reportGapsAreClippedToRangeAndFiltered" classname="cn.onan.sentinel.VisibleFeaturesTest" time="0.088"/>
+  <testcase name="keysetPagingDoesNotRepeatRows" classname="cn.onan.sentinel.VisibleFeaturesTest" time="0.044"/>
+  <testcase name="boundedLaneSupportsImmediateSequentialCompletionAndFailure" classname="cn.onan.sentinel.VisibleFeaturesTest" time="0.084"/>
+  <testcase name="reportBundleRedactsArbitraryEvidenceAndIsValidJsonl" classname="cn.onan.sentinel.VisibleFeaturesTest" time="0.073"/>
+  <testcase name="largeTargetPidSetIsUnavailableRatherThanSilentlyTruncated" classname="cn.onan.sentinel.VisibleFeaturesTest" time="0.039"/>
+  <testcase name="numericAndroid14SnapshotKeepsOtherUsersAndNativeProcesses" classname="cn.onan.sentinel.VisibleFeaturesTest" time="0.056"/>
+  <testcase name="thirdPartyClassificationUsesPackageFlags" classname="cn.onan.sentinel.VisibleFeaturesTest" time="0.028"/>
+  <testcase name="failedBatchNeverBecomesSuccessfulAbsence" classname="cn.onan.sentinel.VisibleFeaturesTest" time="0.064"/>
+  <testcase name="mismatchedUidDoesNotGetAttributed" classname="cn.onan.sentinel.VisibleFeaturesTest" time="0.024"/>
+  <testcase name="oneBatchReusesOneObservationAndExcludesOtherUsers" classname="cn.onan.sentinel.VisibleFeaturesTest" time="0.065"/>
+  <testcase name="arbitraryCommandLineAndUrlAreNotDisplayedAsAppNames" classname="cn.onan.sentinel.VisibleFeaturesTest" time="0.029"/>
+  <testcase name="mixedSharedUidAndIsolatedUidAreUnknown" classname="cn.onan.sentinel.VisibleFeaturesTest" time="0.026"/>
+  <testcase name="reportClockReversalIsDisclosed" classname="cn.onan.sentinel.VisibleFeaturesTest" time="0.082"/>
+  <testcase name="reportSaveFailureCleansPrivateSpoolWithoutMutatingHistory" classname="cn.onan.sentinel.VisibleFeaturesTest" time="0.085"/>
+  <testcase name="snapshotOutputIsBounded" classname="cn.onan.sentinel.VisibleFeaturesTest" time="0.032"/>
+  <testcase name="emptyOperationsAndDefaultRemainAmbiguousInChinese" classname="cn.onan.sentinel.VisibleFeaturesTest" time="0.077"/>
+  <testcase name="reportOpenSessionsNeverInventUptime" classname="cn.onan.sentinel.VisibleFeaturesTest" time="0.071"/>
+  <testcase name="userColumnVendorVariantFailsClosed" classname="cn.onan.sentinel.VisibleFeaturesTest" time="0.039"/>
+  <testcase name="sharedUidKeepsAllCandidatesDespiteNameMatch" classname="cn.onan.sentinel.VisibleFeaturesTest" time="0.069"/>
+  <testcase name="reportCountsSourceAttemptsAndIntervalsWithoutMixingSources" classname="cn.onan.sentinel.VisibleFeaturesTest" time="0.053"/>
+  <testcase name="timeFilterIsHalfOpenAndParameterized" classname="cn.onan.sentinel.VisibleFeaturesTest" time="0.06"/>
+  <testcase name="chineseAllowNeverClaimsAccess" classname="cn.onan.sentinel.VisibleFeaturesTest" time="0.027"/>
+  <testcase name="snapshotJsonRoundTripAndErrorWithoutRows" classname="cn.onan.sentinel.VisibleFeaturesTest" time="0.062"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

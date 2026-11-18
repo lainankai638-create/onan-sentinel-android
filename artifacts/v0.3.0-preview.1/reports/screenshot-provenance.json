@@ -1,0 +1,22 @@
+{
+  "light-320dp": {
+    "apkSha256": "51fda5a8e6180854c5ed8736b525ec6c4cf02cf76ef512f52d74bae61037a44b",
+    "origin": "actual Android 14 emulator screenshots; no synthetic data or image editing"
+  },
+  "live": {
+    "apkSha256": "51fda5a8e6180854c5ed8736b525ec6c4cf02cf76ef512f52d74bae61037a44b",
+    "origin": "actual Android 14 emulator screenshots; no synthetic data or image editing"
+  },
+  "matrix": {
+    "apkSha256": "51fda5a8e6180854c5ed8736b525ec6c4cf02cf76ef512f52d74bae61037a44b",
+    "origin": "actual Android 14 emulator screenshots; no synthetic data or image editing"
+  },
+  "final-matrix": {
+    "apkSha256": "b15962c055d7e01588709724186dede3431f36928d4408a22df4048a1f0d4ab3",
+    "origin": "actual Android 14 emulator screenshots; no synthetic data or image editing"
+  },
+  "live-final": {
+    "apkSha256": "b15962c055d7e01588709724186dede3431f36928d4408a22df4048a1f0d4ab3",
+    "origin": "actual Android 14 emulator screenshots; no synthetic data or image editing"
+  }
+}

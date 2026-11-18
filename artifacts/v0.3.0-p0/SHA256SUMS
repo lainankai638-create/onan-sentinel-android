@@ -1,6 +1,6 @@
 cb9b9f52340a76c4fae2c3f7d5b6175cf6662179786f8df81060e91cbc6b9216  onan-sentinel-0.3.0-p0-androidTest.apk
 7c81f8b07be32121afb93e6b0093d2db5301329ca021539206ca0cc501966b0f  onan-sentinel-0.3.0-p0-preview.apk
-889d8117f4942b672038f9ab929d70680834ba2db5d1e783e15a03fcbdd99745  onan-sentinel-0.3.0-p0-source.zip
+00404635a19170a23356e9caf68c7c0e66d0a0ce7bb208d41542b324c999a0c9  onan-sentinel-0.3.0-p0-source.zip
 16523c466f975d35a328a8db769770ed3e4f4d8f790c29a0d2d18296889e1c92  reports/TEST-cn.onan.sentinel.Android14FormatTest.xml
 4407e2b2037bde1b5d3f205104022f65b28943b0160705ea9ef12f53ffded7ba  reports/TEST-cn.onan.sentinel.CollectionSafetyTest.xml
 95b3759dbdfed6cc7b9c83540bb90cf6258864204ba78ee1881ffdec9c8a281d  reports/TEST-cn.onan.sentinel.FailureReasonTest.xml
@@ -12,4 +12,5 @@ ff5e042ac99b3a54bec4383ccd8c819f566fbdaf4cc2b7df965702eb38474776  reports/TEST-c
 fa4744a0d5293ca4f3cd77b6736c70efc9960c8cf3057a0d381935f8858dc1b7  reports/TEST-cn.onan.sentinel.StoreTest.xml
 dad0e4396659357082b1ac91853fb5a8d7108e8904dfe8512e8c1e7f7c446d0a  reports/apk-verification.txt
 5757960b29e4d31d20e81b47988b41d30e021e8d0f4e084fb54d79b5e6e7b547  reports/build.log
+090d7830d654060f187b754c5cac33d549f6906215f4a425a051318106a79f34  reports/delivery-review.json
 f8dee563cca2e631a695667e08d29313155991f9d1ff453cb21c4bdf5c5d3a34  reports/lint-results-debug.txt

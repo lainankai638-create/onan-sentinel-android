@@ -1,0 +1,57 @@
+{
+  "artifactComparison": {
+    "v0.2.0": {
+      "applicationId": "cn.onan.sentinel.preview",
+      "certificateSha256": "22b00efcde1f683588919a99893917074063928ba845bea6fa9af2a70cace4ce",
+      "apkSha256": "33ec0155c2e3cc0325a6a6608cad9702773664478ea72782758daaf8145de9bf"
+    },
+    "v0.3.0-p0": {
+      "applicationId": "cn.onan.sentinel.preview",
+      "certificateSha256": "22b00efcde1f683588919a99893917074063928ba845bea6fa9af2a70cace4ce",
+      "apkSha256": "7c81f8b07be32121afb93e6b0093d2db5301329ca021539206ca0cc501966b0f"
+    }
+  },
+  "originalEventsMetaDDLUnchanged": true,
+  "tests": [
+    {
+      "name": "cn.onan.sentinel.Android14FormatTest",
+      "tests": 9
+    },
+    {
+      "name": "cn.onan.sentinel.CollectionSafetyTest",
+      "tests": 4
+    },
+    {
+      "name": "cn.onan.sentinel.FailureReasonTest",
+      "tests": 2
+    },
+    {
+      "name": "cn.onan.sentinel.LegacyCompatibilityTest",
+      "tests": 3
+    },
+    {
+      "name": "cn.onan.sentinel.MigrationTest",
+      "tests": 6
+    },
+    {
+      "name": "cn.onan.sentinel.PolicyTest",
+      "tests": 9
+    },
+    {
+      "name": "cn.onan.sentinel.ShizukuBridgeTest",
+      "tests": 4
+    },
+    {
+      "name": "cn.onan.sentinel.SourceCoverageTest",
+      "tests": 7
+    },
+    {
+      "name": "cn.onan.sentinel.StoreTest",
+      "tests": 8
+    }
+  ],
+  "phoneInstalledCertificate": "NOT_OBTAINED",
+  "phoneDatabase": "NOT_OBTAINED",
+  "realHistoryMigration": "NOT_DEVICE_VALIDATED",
+  "apkRebuiltThisTurn": false
+}

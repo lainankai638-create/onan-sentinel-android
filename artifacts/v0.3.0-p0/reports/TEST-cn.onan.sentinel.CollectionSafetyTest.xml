@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="cn.onan.sentinel.CollectionSafetyTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-11-18T04:54:05" hostname="386ecc2d0c58" time="0.117">
+  <properties/>
+  <testcase name="failedCallCanBeRetriedWithoutReplacingExecutor" classname="cn.onan.sentinel.CollectionSafetyTest" time="0.009"/>
+  <testcase name="pauseStopAndResumeRejectEveryOldResult" classname="cn.onan.sentinel.CollectionSafetyTest" time="0.001"/>
+  <testcase name="lateConnectedCallbacksCannotReplaceCurrentRemote" classname="cn.onan.sentinel.CollectionSafetyTest" time="0.001"/>
+  <testcase name="uninterruptibleTimeoutCannotCreateThreadsOrQueueMoreCalls" classname="cn.onan.sentinel.CollectionSafetyTest" time="0.105"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

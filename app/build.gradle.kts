@@ -8,8 +8,8 @@ android {
         applicationId = "cn.onan.sentinel.preview"
         minSdk = 26
         targetSdk = 34
-        versionCode = 200
-        versionName = "0.2.0-preview"
+        versionCode = 300
+        versionName = "0.3.0-p0-preview"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildFeatures { aidl = true; buildConfig = true }

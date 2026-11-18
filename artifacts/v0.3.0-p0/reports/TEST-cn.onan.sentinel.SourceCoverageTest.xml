@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="cn.onan.sentinel.SourceCoverageTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-11-18T04:54:19" hostname="386ecc2d0c58" time="3.605">
+  <properties/>
+  <testcase name="sqliteFullRollsBackWholeSampleWithoutResettingOldEvidence" classname="cn.onan.sentinel.SourceCoverageTest" time="0.119"/>
+  <testcase name="reportUsesRetainedSourceIntervalsAndFlagsClockReversal" classname="cn.onan.sentinel.SourceCoverageTest" time="0.19"/>
+  <testcase name="onlyRecoveredSourceClosesAndPartialSuccessDoesNotMaskOtherTargets" classname="cn.onan.sentinel.SourceCoverageTest" time="0.282"/>
+  <testcase name="auxiliaryRetentionIsBoundedAndCleanupCannotRunWhileActive" classname="cn.onan.sentinel.SourceCoverageTest" time="2.705"/>
+  <testcase name="lateOldServiceShutdownCannotCloseReplacementSession" classname="cn.onan.sentinel.SourceCoverageTest" time="0.099"/>
+  <testcase name="knownPauseAndUnknownLossBoundsRemainDistinctAndFailuresPersist" classname="cn.onan.sentinel.SourceCoverageTest" time="0.121"/>
+  <testcase name="failedExportRemovesSpoolAndDoesNotChangeDatabase" classname="cn.onan.sentinel.SourceCoverageTest" time="0.086"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

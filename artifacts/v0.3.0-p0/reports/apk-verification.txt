@@ -1,0 +1,41 @@
+Verifies
+Verified using v1 scheme (JAR signing): false
+Verified using v2 scheme (APK Signature Scheme v2): true
+Verified using v3 scheme (APK Signature Scheme v3): false
+Verified using v3.1 scheme (APK Signature Scheme v3.1): false
+Verified using v4 scheme (APK Signature Scheme v4): false
+Verified for SourceStamp: false
+Number of signers: 1
+Signer #1 certificate DN: CN=Android Debug, O=Android, C=US
+Signer #1 certificate SHA-256 digest: 22b00efcde1f683588919a99893917074063928ba845bea6fa9af2a70cace4ce
+Signer #1 certificate SHA-1 digest: 1e8d25a1660eca0b7b5df84644db11a788c1c4c6
+Signer #1 certificate MD5 digest: 2c7ed0c968d8ad759a4b79d846042796
+Signer #1 key algorithm: RSA
+Signer #1 key size (bits): 2048
+Signer #1 public key SHA-256 digest: 0253ae82511b16bbc0ed08c85fb7b096badbf5d79559a42f16d81dff1d31a16b
+Signer #1 public key SHA-1 digest: 60f693a7e4a6dc48a97c733907475d881efa1b79
+Signer #1 public key MD5 digest: e4fc487d2dacfa2fedbd2c4035ab8bb3
+
+zipalign -c 4: exit 0
+
+package: name='cn.onan.sentinel.preview' versionCode='300' versionName='0.3.0-p0-preview' platformBuildVersionName='15' platformBuildVersionCode='35' compileSdkVersion='35' compileSdkVersionCodename='15'
+sdkVersion:'26'
+targetSdkVersion:'34'
+uses-permission: name='android.permission.FOREGROUND_SERVICE'
+uses-permission: name='android.permission.FOREGROUND_SERVICE_SPECIAL_USE'
+uses-permission: name='android.permission.POST_NOTIFICATIONS'
+uses-permission: name='moe.shizuku.manager.permission.API_V23'
+application-label:'欧南·网络哨兵（隔离测试）'
+application-icon-160:'res/drawable/ic_sentinel.xml'
+application: label='欧南·网络哨兵（隔离测试）' icon='res/drawable/ic_sentinel.xml'
+application-debuggable
+launchable-activity: name='cn.onan.sentinel.MainActivity'  label='' icon=''
+feature-group: label=''
+  uses-feature: name='android.hardware.faketouch'
+  uses-implied-feature: name='android.hardware.faketouch' reason='default feature for all apps'
+main
+other-services
+supports-screens: 'small' 'normal' 'large' 'xlarge'
+supports-any-density: 'true'
+locales: '--_--'
+densities: '160'

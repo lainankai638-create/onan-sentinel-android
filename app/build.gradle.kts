@@ -8,8 +8,8 @@ android {
         applicationId = "cn.onan.sentinel.preview"
         minSdk = 26
         targetSdk = 34
-        versionCode = 300
-        versionName = "0.3.0-p0-preview"
+        versionCode = 301
+        versionName = "0.3.0-preview.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildFeatures { aidl = true; buildConfig = true }
@@ -21,6 +21,8 @@ android {
     lint { abortOnError = true }
 }
 dependencies {
+    implementation("com.google.android.material:material:1.12.0")
+    implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("dev.rikka.shizuku:api:13.1.5")
     implementation("dev.rikka.shizuku:provider:13.1.5")
     testImplementation("junit:junit:4.13.2")

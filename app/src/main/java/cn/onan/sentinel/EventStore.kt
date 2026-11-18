@@ -47,6 +47,7 @@ class EventStore(private val context: Context) : SQLiteOpenHelper(context, "sent
             put("timestamp", time); put("elapsed", SystemClock.elapsedRealtime()); put("target", target)
             put("type", type); put("source", source); put("status", status); put("evidence", evidence.take(Policy.MAX_EVIDENCE))
         })
+        UiSignals.changed()
     }
     @Synchronized fun atomic(block: EventStore.() -> Unit) {
         val db = writableDatabase

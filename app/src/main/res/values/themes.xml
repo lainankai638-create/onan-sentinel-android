@@ -1,0 +1,20 @@
+<resources>
+    <style name="Theme.Sentinel" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/sentinel_primary</item>
+        <item name="colorOnPrimary">@color/sentinel_on_primary</item>
+        <item name="colorPrimaryContainer">@color/sentinel_container</item>
+        <item name="colorOnPrimaryContainer">@color/sentinel_on_surface</item>
+        <item name="colorSurface">@color/sentinel_surface</item>
+        <item name="colorOnSurface">@color/sentinel_on_surface</item>
+        <item name="android:colorBackground">@color/sentinel_surface</item>
+        <item name="android:statusBarColor">@color/sentinel_surface</item>
+        <item name="android:navigationBarColor">@color/sentinel_surface</item>
+        <item name="android:windowLightStatusBar">@bool/sentinel_light</item>
+    </style>
+    <color name="sentinel_primary">#006B5F</color>
+    <color name="sentinel_on_primary">#FFFFFF</color>
+    <color name="sentinel_container">#C4EDE3</color>
+    <color name="sentinel_surface">#F5F8F5</color>
+    <color name="sentinel_on_surface">#172D29</color>
+    <bool name="sentinel_light">true</bool>
+</resources>

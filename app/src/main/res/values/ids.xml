@@ -1,0 +1,6 @@
+<resources>
+    <item name="tab_overview" type="id" />
+    <item name="tab_apps" type="id" />
+    <item name="tab_timeline" type="id" />
+    <item name="tab_report" type="id" />
+</resources>

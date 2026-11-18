@@ -1,0 +1,8 @@
+<resources>
+    <color name="sentinel_primary">#83D5C3</color>
+    <color name="sentinel_on_primary">#00382F</color>
+    <color name="sentinel_container">#174E44</color>
+    <color name="sentinel_surface">#101D1A</color>
+    <color name="sentinel_on_surface">#DAE8E1</color>
+    <bool name="sentinel_light">false</bool>
+</resources>

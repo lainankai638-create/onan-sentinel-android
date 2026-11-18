@@ -1,10 +1,16 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="moe.shizuku.manager.permission.API_V23" />
+    <!-- Whole visible-process inventory requires UID-to-package candidates beyond a fixed queries list.
+         Metadata only, on explicit refresh; no content reading or inventory upload. Sideload preview. -->
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" tools:ignore="QueryAllPackagesPermission" />
+    <!-- Special app-op access is granted by the user's Usage Access settings, not a runtime
+         signature permission. Capability is checked and SecurityException fails closed. -->
+    <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS" tools:ignore="ProtectedPermissions" />
     <application android:name=".SentinelApp" android:label="欧南·网络哨兵（隔离测试）"
-        android:theme="@android:style/Theme.Material.Light.NoActionBar" android:allowBackup="false" android:dataExtractionRules="@xml/local_data_rules"
+        android:theme="@style/Theme.Sentinel" android:allowBackup="false" android:dataExtractionRules="@xml/local_data_rules"
         android:supportsRtl="true" android:icon="@drawable/ic_sentinel">
         <activity android:name=".MainActivity" android:exported="true">
             <intent-filter>

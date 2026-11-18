@@ -5,8 +5,7 @@ import android.content.Intent
 import android.content.pm.ServiceInfo
 import android.os.*
 import org.json.JSONObject
-import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
+import java.util.UUID
 
 class MonitorService : Service() {
     companion object {
@@ -21,7 +20,9 @@ class MonitorService : Service() {
     private val thread = HandlerThread("sentinel-monitor")
     private lateinit var worker: Handler
     private lateinit var bridge: ShizukuBridge
-    private val calls = Executors.newSingleThreadExecutor()
+    private val control = CollectionControl()
+    private var session = UUID.randomUUID().toString()
+    private val owner = UUID.randomUUID().toString()
     private val baselines = Baselines()
     private var paused = false
     @Volatile private var closing = false
@@ -49,7 +50,7 @@ class MonitorService : Service() {
                 if (!closing && initialized) safe {
                     store.add(reason, if (reason == "SHIZUKU_CONNECTED") "OK" else "PARTIAL", "BINDER_CALLBACK_OBSERVED", source = "SHIZUKU_BINDER", time = observed)
                     if (reason.contains("DISCONNECT") || reason.contains("DENIED") || reason.contains("DIED")) {
-                        baselines.clear(); store.gap(reason, observed); update(reason)
+                        baselines.clear(); store.gap(reason, observed); store.allSourcesUnavailable(reason); update(reason)
                     }
                 }
             }
@@ -58,7 +59,8 @@ class MonitorService : Service() {
         manager.createNotificationChannel(NotificationChannel(CHANNEL, "可见监控状态", NotificationManager.IMPORTANCE_LOW))
     }
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        if (intent?.action in setOf(PAUSE, STOP)) haltRequested = true
+        val requestedAt = System.currentTimeMillis()
+        if (intent?.action in setOf(START, PAUSE, STOP)) { haltRequested = true; control.halt() }
         try {
             if (!getSystemService(NotificationManager::class.java).areNotificationsEnabled()) {
                 runtimeStatus = "NOTIFICATION_PERMISSION_REQUIRED"; stopSelf(); return START_NOT_STICKY
@@ -71,9 +73,10 @@ class MonitorService : Service() {
         }
         worker.post { safe {
             when (intent?.action) {
-                STOP -> finish("USER_STOPPED")
+                STOP -> finish("USER_STOPPED",requestedAt)
                 PAUSE -> if (initialized && !paused) {
                     paused = true; bridge.release(); baselines.clear()
+                    store.allSourcesUnavailable("USER_PAUSED", requestedAt, "KNOWN_STOP")
                     store.gap("USER_PAUSED"); store.add("PAUSED", "UNAVAILABLE", "User paused collection")
                     update("PAUSED")
                 }
@@ -81,12 +84,19 @@ class MonitorService : Service() {
                     if (!initialized) {
                         store.atomic {
                             add("SESSION_START", "OK", "Manual visible foreground service; interval=${interval / 60000} minutes; user=0")
+                            val fingerprint = java.security.MessageDigest.getInstance("SHA-256").digest(Build.FINGERPRINT.toByteArray())
+                                .joinToString("") { "%02x".format(it) }
+                            add("DEVICE_CONTEXT", "PARTIAL", "app=${BuildConfig.VERSION_NAME}; sdk=${Build.VERSION.SDK_INT}; fingerprintSha256=$fingerprint; intervalMs=$interval; battery/network settings not independently recorded")
                             setMeta("active", "true"); setMeta("lastTick", System.currentTimeMillis().toString())
+                            setMeta("activeOwner", owner)
                             gap("AWAITING_FIRST_VALID_SAMPLE")
+                            allSourcesUnavailable("AWAITING_FIRST_VALID_SAMPLE", System.currentTimeMillis(), "OBSERVED_UNAVAILABLE")
                         }
                         initialized = true; live = true; bridge.start(); worker.post(tick)
                     } else if (paused) store.add("RESUMED", "PARTIAL", "User resumed; next valid sample ends gap")
                     paused = false; nextSample = 0; lastSampleElapsed = 0
+                    session = UUID.randomUUID().toString(); control.resume()
+                    baselines.clear()
                     haltRequested = false
                     update("CONNECTING")
                 }
@@ -96,20 +106,30 @@ class MonitorService : Service() {
         return START_NOT_STICKY
     }
     private fun poll() {
-        if (!initialized || paused || haltRequested) return
+        if (!initialized) return
         val notifications = getSystemService(NotificationManager::class.java)
-        if (!notifications.areNotificationsEnabled() || notifications.getNotificationChannel(CHANNEL)?.importance == NotificationManager.IMPORTANCE_NONE) {
+        for ((key,value) in bridge.health()) if (store.meta("link.$key") != value) {
+            store.setMeta("link.$key", value)
+            if (key != "retryAfterMs") store.add("LINK_STATE", "PARTIAL", "$key=$value", source="SHIZUKU_BINDER")
+        }
+        val notificationEnabled = notifications.areNotificationsEnabled() && notifications.getNotificationChannel(CHANNEL)?.importance != NotificationManager.IMPORTANCE_NONE
+        store.setMeta("link.notification", if(notificationEnabled) "CHANNEL_ENABLED" else "DISABLED")
+        if (!notificationEnabled) {
             finish("NOTIFICATIONS_DISABLED"); return
         }
+        if (paused || haltRequested) return
+        val controlToken = control.token()
         val now = SystemClock.elapsedRealtime()
         if (!delayReported && lastSampleElapsed > 0 && now - lastSampleElapsed > interval + 30000) {
             store.gap("SCHEDULER_DELAY; last sample is earliest bound; sleep or scheduling cause not known", lastSampleWall)
+            store.allSourcesUnavailable("SCHEDULER_DELAY_CAUSE_UNKNOWN", lastSampleWall, "UNKNOWN_LOWER_BOUND")
             baselines.clear(); delayReported = true
         }
         val available = bridge.connect()
         if (available != "READY" || bridge.remote == null) {
             if (available != lastReason) {
                 store.gap(available); store.add("COLLECTION_UNAVAILABLE", "UNAVAILABLE", available, source = "SHIZUKU_BINDER")
+                store.allSourcesUnavailable(available)
                 lastReason = available
             }
             baselines.clear(); update(available); return
@@ -123,30 +143,39 @@ class MonitorService : Service() {
         for (target in Policy.targets.indices) {
             for (kind in listOf(Policy.PROCESS, Policy.APPOPS)) {
                 if (closing || paused || haltRequested) return
-                val remote = bridge.remote
-                val generation = bridge.generation
-                if (remote == null || bridge.availability() != "READY") {
-                    baselines.clear(); store.gap("SHIZUKU_LOST_DURING_BATCH"); update("SHIZUKU_LOST_DURING_BATCH"); return
+                val lease = bridge.lease()
+                if (lease == null || bridge.availability() != "READY") {
+                    baselines.clear(); store.gap("SHIZUKU_LOST_DURING_BATCH"); store.allSourcesUnavailable("SHIZUKU_LOST_DURING_BATCH"); update("SHIZUKU_LOST_DURING_BATCH"); return
                 }
-                val future = calls.submit<String> { remote.sample(kind, target) }
+                val (generation,remote) = lease
+                val source = if (kind == Policy.PROCESS) "SHIZUKU_PS" else "SHIZUKU_APPOPS"
+                val started = System.currentTimeMillis()
+                var callFailed = false
                 val evidence = try {
-                    val json = JSONObject(future.get(7, TimeUnit.SECONDS))
+                    val json = JSONObject(ProbeLanes.forKind(kind).call(7000) { remote.sample(kind, target) })
                     Evidence(json.getString("status"), json.getString("evidence").take(Policy.MAX_EVIDENCE))
-                } catch (_: Exception) {
-                    future.cancel(true)
-                    bridge.release(); baselines.clear()
-                    store.gap("USER_SERVICE_CALL_FAILED_OR_TIMEOUT")
-                    store.add("COLLECTION_UNAVAILABLE", "UNAVAILABLE", "USER_SERVICE_CALL_FAILED_OR_TIMEOUT", Policy.targets[target], "SHIZUKU_BINDER")
+                } catch (e: Exception) {
+                    callFailed = e !is IllegalStateException && e !is java.util.concurrent.RejectedExecutionException
+                    Evidence("UNAVAILABLE", if(e is IllegalStateException || e is java.util.concurrent.RejectedExecutionException) "SOURCE_CALL_STILL_RUNNING" else "USER_SERVICE_CALL_FAILED_OR_TIMEOUT")
+                }
+                if (haltRequested || closing || !control.active(controlToken)) return
+                var accepted = false
+                control.accept(controlToken) {
+                    accepted = bridge.accept(generation) {
+                        val type = baselines.compare("$target:$kind", evidence)
+                        store.recordSample(source,Policy.targets[target],evidence,type,started,System.currentTimeMillis(),session,generation)
+                    }
+                }
+                if (!accepted) {
+                    baselines.clear(); store.gap("AUTHORIZATION_OR_SESSION_CHANGED; in-flight result discarded")
+                    store.allSourcesUnavailable("AUTHORIZATION_OR_SESSION_CHANGED"); update("AUTHORIZATION_CHANGED"); return
+                }
+                if (evidence.status in setOf("OK", "PARTIAL")) usable++ else failures++
+                if (callFailed) {
+                    bridge.invalidate("USER_SERVICE_CALL_FAILED_OR_TIMEOUT"); baselines.clear()
+                    store.gap("USER_SERVICE_CALL_FAILED_OR_TIMEOUT"); store.allSourcesUnavailable("USER_SERVICE_CALL_FAILED_OR_TIMEOUT")
                     update("USER_SERVICE_CALL_FAILED_OR_TIMEOUT"); return
                 }
-                if (haltRequested || closing) return
-                if (generation != bridge.generation || bridge.availability() != "READY") {
-                    baselines.clear(); store.gap("AUTHORIZATION_CHANGED; in-flight result discarded"); update("AUTHORIZATION_CHANGED"); return
-                }
-                val source = if (kind == Policy.PROCESS) "SHIZUKU_PS" else "SHIZUKU_APPOPS"
-                val type = baselines.compare("$target:$kind", evidence)
-                store.add(type, evidence.status, evidence.value, Policy.targets[target], source)
-                if (evidence.status in setOf("OK", "PARTIAL")) usable++ else failures++
             }
         }
         lastSampleWall = System.currentTimeMillis(); lastSampleElapsed = SystemClock.elapsedRealtime()
@@ -173,39 +202,34 @@ class MonitorService : Service() {
             .addAction(Notification.Action.Builder(null, if (paused) "恢复" else "暂停", serviceAction(if (paused) START else PAUSE, 1)).build())
             .addAction(Notification.Action.Builder(null, "停止", serviceAction(STOP, 2)).build()).build()
     }
-    private fun finish(reason: String) {
+    private fun finish(reason: String, stoppedAt: Long = System.currentTimeMillis()) {
         if (closing) return
-        closing = true; live = false
+        control.halt(); closing = true; live = false
         bridge.close(); worker.removeCallbacks(tick)
-        store.atomic {
-            gap(reason); add("SESSION_STOP", "UNAVAILABLE", reason)
-            setMeta("active", "false"); setMeta("state", "STOPPED")
-        }
-        runtimeStatus = "STOPPED"
+        if(store.finishSession(owner,reason,stoppedAt)) runtimeStatus = "STOPPED"
         stopForeground(STOP_FOREGROUND_REMOVE); stopSelf()
     }
     private fun safe(block: () -> Unit) {
         try { block() } catch (e: Exception) {
             // A failed database cannot record its own failure reliably. Keep this visible and stop collecting.
-            runtimeStatus = "STORAGE_OR_RUNTIME_FAILURE:${e.javaClass.simpleName}"
-            closing = true; live = false; bridge.close(); worker.removeCallbacks(tick)
+            runtimeStatus = "STORAGE_OR_RUNTIME_FAILURE:${FailureReason.of(e)}"
+            control.halt(); closing = true; live = false; bridge.close(); worker.removeCallbacks(tick)
             getSystemService(NotificationManager::class.java).notify(20, notification(runtimeStatus))
             stopForeground(STOP_FOREGROUND_DETACH); stopSelf()
         }
     }
     override fun onDestroy() {
+        val destroyedAt = System.currentTimeMillis()
         haltRequested = true
+        control.halt()
+        bridge.close() // Release before a replacement Service instance can bind the same UserService.
         live = false
         worker.removeCallbacks(tick)
         worker.post {
             if (!closing && initialized) safe {
-                store.atomic {
-                    gap("SERVICE_DESTROYED"); add("SESSION_STOP", "UNAVAILABLE", "SERVICE_DESTROYED")
-                    setMeta("active", "false"); setMeta("state", "STOPPED")
-                }
-                runtimeStatus = "STOPPED"
+                if(store.finishSession(owner,"SERVICE_DESTROYED",destroyedAt)) runtimeStatus = "STOPPED"
             }
-            closing = true; bridge.close(); calls.shutdownNow(); thread.quitSafely()
+            closing = true; thread.quitSafely()
         }
         super.onDestroy()
     }

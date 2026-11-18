@@ -1,88 +1,58 @@
-# 欧南·系统网络哨兵 v0.2.0
+# 欧南 · 系统网络哨兵 v0.3.0 P0 候选版
 
-这是基于用户提供的 v0.1.1 仓库、面向长期监测重构的 **v0.2.0 隔离测试版**，不是已经验证的原应用升级包。
+本轮实现用户确认的 **P0 可靠性与数据库迁移改造**，不是 v0.3.0 全部路线图功能，也不是已通过实机验收的正式版。起点为 v0.2.0 草稿 PR #1 的 `0a4b12fca2a23c56564ed6134a2c1f805e69afad`。按用户授权公开开发分支为 `codex/v0.3.0`，以 `codex/v0.2.0` 为 Draft PR 基线，不改写 v0.2.0 分支、不合并 main。
 
-| 标识 | 本工程 |
+| 项目 | 当前候选版 |
 | --- | --- |
-| Kotlin namespace | `cn.onan.sentinel` |
-| APK applicationId | `cn.onan.sentinel.preview` |
-| versionName / code | `0.2.0-preview` / `200` |
-| 最低 / 目标 / 编译 SDK | 26 / 34 / 35 |
-| 目标验收设备 | Redmi K40S，Android 14，HyperOS 1.0.15.0.ULMCNXM |
-| 签名 | 新的测试签名；从未使用或修改旧签名 |
-| 数据库 | 测试包私有目录中的 `sentinel_v020.db`，schema 1 |
+| applicationId / namespace | `cn.onan.sentinel.preview` / `cn.onan.sentinel` |
+| versionName / versionCode | `0.3.0-p0-preview` / 300 |
+| min / target / compile SDK | 26 / 34 / 35 |
+| 数据库 | 保留 `sentinel_v020.db` 文件名，schema 1→2 |
+| APK 签名 | 沿用此前交付 preview 测试密钥；不是原版 `cn.onan.sentinel` 签名 |
+| 目标验收设备 | Redmi K40S / Android 14 / HyperOS 1.0.15.0.ULMCNXM |
 
-## 旧工程检索结果
+## 本轮实现
 
-最初本地及包名搜索未找到工程。用户随后提供公开仓库，现已找回并检查 [lainankai638-create/onan-sentinel-android](https://github.com/lainankai638-create/onan-sentinel-android) 的 `main`，基线提交 `c5b14b5bb2d754015ce087a5cd18fbef3dfd8f91`，版本 `0.1.1` / code `2`。源码、Gradle、Wrapper、Shizuku UserService、SQLite DDL、5 项旧单元测试及历史 `TESTING.md` 均已取得。完整原始快照保存在 `legacy-reference/v0.1.1/`，不参与本次 APK 编译；其中旧安装说明不适用于本次交付。
+- 分开记录 Binder、授权、UserService、通知渠道和每个采集来源状态；每次绑定有新代次，迟到/重复回调被拒绝，连接失败退避至最多 60 秒。
+- 进程/AppOps 各一个进程内共享的调用通道，最多两个探针线程，不排队；取消无法终止远端 Binder 时保持忙碌状态，拒绝继续堆积任务。暂停、停止、代次变化或撤权后在途结果不作为成功样本入库。远端在途命令不保证瞬时取消，仍受原有命令超时约束。
+- `来源×目标` 独立状态、尝试记录和空白期；一个来源恢复不关闭其他来源空白期。区分已知停止时刻、发现不可用时刻和未知中断下界，权限不足/格式未知单独呈现。
+- schema 1→2 先在应用私有 `noBackupFilesDir` 创建一致的逻辑备份，逐字段摘要比对并检查完整性，再进行事务迁移。原 events/meta 内容不改写；未知结构/版本或空间不足拒绝迁移，不删库重建。
+- 旧事件导出标为 `legacy_schema_1`，不补造历史 UID、精确停止时刻或来源覆盖率。保留策略继续生效：迁移事务本身不删旧行，之后的新采样/异常恢复写入仍可能触发原有容量淘汰，并记账。
+- 流式 JSONL 导出先生成私有脱敏临时文件，不把整个事件集装入内存，也不持有数据库锁等待外部文档提供商。外部写入失败删除临时文件；进程被杀遗留的脱敏临时文件在下次启动清理。
+- 报告增加来源状态、保留范围内最长采样间隔/空白期、时钟回退提示、清理记录。不是全历史事件捕获率。设备上下文保存系统构建 fingerprint 的 SHA-256、SDK、版本和采样间隔；用户电池/网络设置仍需人工记录。
 
-**仍缺失**：v0.1.0 独立源码、旧 APK 实物、可用于更新现装版本的签名密钥/证书指纹、真实数据库样本及原始构建日志。旧版 README 明确声明 v0.1.0 调试密钥未保留，v0.1.1 使用过新的调试签名。历史 TESTING.md 的构建成功和 APK hash 仅作为既有记录，不能当成本次重测结果。没有覆盖旧应用、卸载旧包、清理旧数据库、重新签署旧 APK，也没有对真实手机执行安装。
+## 保持的安全边界
 
-旧库为 `evidence.db` schema 1。本版新增独立 `sentinel_v020.db`，保留旧库不迁移、不修剪；提供只读结构/行数检查。隔离包不能跨 Android 沙箱读取旧包数据。使用旧 DDL 的合成样本测试只能证明结构兼容与保留策略，不能证明现装旧版升级已通过。旧抓包/CSV/PCAP/附原始文件导出和 JobScheduler 页面被留在参考快照，本次 APK 聚焦用户要求的长期只读监测，不暴露这些入口。
+固定目标仍为 securitycenter、guardprovider、powerkeeper；固定只读命令仍为 `ps -A -w -o UID,PID,NAME` 和 `cmd appops get --user 0 <白名单目标>`。只接受 Shizuku shell UID 2000，无 Root、无 `sh -c`、无修改系统/AppOps、无 INTERNET 或私密内容权限。数据库和导出只保存净化元数据，不自动上传。
 
-正式使用 `cn.onan.sentinel` 前，必须取得旧代码/数据库结构和原签名，编写明确迁移并在备份副本上验收。不要直接修改 applicationId 后安装，也不要为解决签名冲突卸载旧版。
+原版 `cn.onan.sentinel` 与 `evidence.db` 不受本次改造操作。新增迁移只针对 preview 沙箱的 `sentinel_v020.db`。没有在用户设备上安装、卸载、清理数据或更改设置。
 
-## 已实现的边界
+## 升级与备份
 
-- 用户手动启动的 Android 前台服务，持续发布运行通知，可暂停、恢复、停止；没有开机自启、隐藏后台启动或系统限制绕过。
-- Shizuku Binder 回调与运行时授权检查；仅接受 ADB shell UID 2000，拒绝 root 模式。
-- Shizuku UserService 只接收两个枚举整数。固定只读命令为 `ps -A -w -o UID,PID,NAME` 和 `cmd appops get --user 0 <固定目标>`，不经过 `sh -c`。进程结果按数值 UID 过滤主用户，其他用户/第二空间不会归入 user 0。
-- 固定目标：`com.miui.securitycenter`、`com.miui.guardprovider`、`com.miui.powerkeeper`。新增目标需要修改源码白名单并重编译；UI 不提供任意命令或任意包名输入。
-- 默认 5 分钟采样，可选择 1 / 5 / 15 分钟。每 15 秒检查连接；暂停时不采样。单命令超时 4 秒，Binder 等待上限 7 秒，输出上限 64 KiB。用户暂停/停止后不保存在途结果。
-- 进程样本只保存匹配目标的 PID。`NOT_OBSERVED_IN_PS` 仅表示该次可见列表未出现，不能证明进程绝对不存在。PID 变化是观察到的变化，不等于精确进程启动时间或恶意活动。
-- AppOps 仅解析可识别的操作模式，明确带前缀的行标为 `UID`，其余行标为 `UNSCOPED`，不猜测包级/UID 归属，状态标为 `PARTIAL`。支持 `No operations.` 后附 `Default mode: allow` 等已知默认模式，但不推断操作名或访问行为。不保存归因标签、原始命令输出或相对访问时间；因此只能比较模式变化，不能还原完整调用历史、读取内容或判断数据外传。
-- SQLite 保存墙钟时间、单调时间、目标、事件类型、来源、状态和证据；支持异常、启动/观察时间线、证据筛选和 JSONL 导出。
-- 数据库主文件上限 32 MiB、最多 20,000 条，约 24 MiB 使用量或行数到阈值时删除较旧记录；回滚日志可能临时占额外空间。清理必须停止监控并手动确认；不会操作旧包数据。
-- 无 INTERNET、音频、短信、通话、位置、外部存储读取权限；不自动上传、不接入分析 SDK、不抓包、不注入、不拦截 TLS。
+仅与此前同证书的 preview 构建具备签名更新条件；是否在目标机无损升级尚待实测。证书 SHA-256：`22b00efcde1f683588919a99893917074063928ba845bea6fa9af2a70cace4ce`。
 
-## 空白期与真实性
+已对两份交付 APK 实物复核包名和证书一致；**当前手机已安装 APK 的证书、真实数据库均未取得，不能声称已经验证手机一致性或真实历史无损升级**。签名未知或不一致时，保留手机现状，采用 [兼容性检查与隔离测试方案](docs/V030_COMPATIBILITY_REVIEW.md)，不卸载、不清库。
 
-`GAP_BEGIN` / `GAP_END` 表示采集不可用区间。连接丢失、授权缺失、暂停、停止、调度延迟、全部证据源失败均有状态记录。各目标/证据源独立失败也保留不可用样本。恢复后重新建立基线，不跨空白期伪称连续变化。
+迁移备份保留到用户停止监控并明确选择“删除本测试包的 schema 1 迁移备份”。备份不是跨包导入，也不是自动降级工具。不要卸载旧版来解决签名问题；schema 2 不支持直接用 v0.2.0 降级打开。清理当前历史不自动清理迁移备份，备份仍含迁移前本地历史。
 
-本进程被系统直接杀死时无法在死亡瞬间写入数据库。下次打开时，若发现未关闭会话，记录 `UNCLEAN_STOP_DETECTED`，以最后持久化采样时间作为空白期起点的保守下界，并明确实际停止时刻未知。尚未重新打开时数据库仍可能保留未关闭会话，不能解释为还在运行。
-
-没有持有长期唤醒锁。Doze、HyperOS 保活策略、用户强制停止和无线调试关闭均可能中断采样。前台服务不保证 24 小时连续运行；Android 14 用户也可以关闭/隐藏通知。通知被禁用后检查到即停止。若磁盘/SQLite 写入失败，停止采集并通过运行状态/通知显示错误，不静默重建库。
+容量：主库上限 32 MiB、events 最多 20,000 条；来源尝试最多约 2,000 条、已关闭来源空白期最多约 2,000 条，超限回收至 1,000 条，另保留最多六个开放空白期与 100 条清理摘要。主库、日志、备份与导出临时文件共同占空间，不能把 32 MiB 当作总占用上限。迁移预检需要至少旧主库大小×3+8 MiB 的可用空间；导出预检需要 64 MiB 余量，不自动清除用户文件腾空间。
 
 ## 构建
 
-环境：完整 JDK 17、Android SDK platform 35、Build Tools 34.0.0、Gradle 8.9（Wrapper）、AGP 8.7.3、Kotlin 2.0.21、Shizuku API/provider 13.1.5。首次构建需要访问 Google Maven、Maven Central 和 Gradle 分发站点。
+完整 JDK 17、Gradle 8.9 Wrapper、AGP 8.7.3、Kotlin 2.0.21、Shizuku 13.1.5。设置 `ANDROID_HOME` 或私有 `local.properties`，安装 `platforms;android-35`、`build-tools;34.0.0`、`platform-tools`。
 
-1. 安装 Android Studio 或 Android command-line tools，并接受 SDK 许可：
+第一次自行构建时为自己的 preview 生成测试密钥；以后保留该文件。该自建密钥与本次交付密钥不同，不能据此声称能更新已安装的交付 APK。私钥不进入公开源码。
 
-   ```sh
-   sdkmanager "platforms;android-35" "build-tools;34.0.0" "platform-tools"
-   ```
+```sh
+mkdir -p .local-signing
+keytool -genkeypair -keystore .local-signing/debug.keystore -storepass android -keypass android -alias androiddebugkey -dname "CN=Android Debug,O=Android,C=US" -keyalg RSA -keysize 2048 -validity 3650
+./gradlew --no-daemon :app:assembleDebug :app:testDebugUnitTest :app:lintDebug :app:assembleDebugAndroidTest
+```
 
-2. 通过 `ANDROID_HOME` 指向 SDK，或在本地创建 `local.properties`（不包含在交付中）：
+APK 位于 `app/build/outputs/apk/debug/app-debug.apk`。主机测试使用 Robolectric Android 34/native SQLite；仪器测试 APK 仅编译，不应在个人数据设备随意运行清理测试。
 
-   ```properties
-   sdk.dir=/your/path/to/Android/sdk
-   ```
+## 未完成与验收
 
-3. 仅第一次为隔离测试包生成本地测试密钥，后续构建保留此文件。不要使用原版密钥：
+完整中文四入口/八页面、进程 UID 归属增强、NetworkStats 实验、Markdown 范围报告不是本轮 P0 范围；v0.4.0 敏感访问与跳转、v0.5.0 网络分析未开发。未执行 Redmi K40S 真实升级、撤权/恢复、Doze、24h、耗电或 UI 实机验收。
 
-   ```sh
-   mkdir -p .local-signing
-   keytool -genkeypair -keystore .local-signing/debug.keystore -storepass android -keypass android -alias androiddebugkey -dname "CN=Android Debug,O=Android,C=US" -keyalg RSA -keysize 2048 -validity 3650
-   ```
-
-4. 构建和检查：
-
-   ```sh
-   ./gradlew --no-daemon :app:assembleDebug :app:testDebugUnitTest :app:lintDebug :app:assembleDebugAndroidTest
-   ```
-
-   Windows 使用 `gradlew.bat`。APK 位于 `app/build/outputs/apk/debug/app-debug.apk`；单元测试 HTML 位于 `app/build/reports/tests/testDebugUnitTest/index.html`。Release 不配置任何签名，不能当作原版升级包。
-
-测试代码中的 Robolectric 使用 Android 14 框架与 native SQLite；这是主机测试，不是实机运行。`StoreInstrumentedTest` 会清理 **preview 包** 的测试数据，仅在专用测试设备/模拟器运行。
-
-## 手机上使用
-
-1. 保留 v0.1.0。安装隔离 APK，确认包名以 `.preview` 结尾。
-2. 在 Shizuku 中用无线调试启动服务；不要用 root 模式。
-3. 打开“欧南·网络哨兵（隔离测试）”，点击授权 Shizuku，再允许通知，再点击启动。
-4. 查看来源状态及证据。某组件不存在、命令格式不同或权限受限时，应显示失败原因，不应补造结果。
-5. 导出通过系统文档选择器由用户选择目的地。报告包含分钟级时间、目标别名、操作模式和空白期；删除 PID 和精确时间，但不保证完全匿名。选择本地目录可避免用户所选云文档提供商自行同步。
-6. 停止并确认后可清理本测试包历史。自动保留策略也会删除旧记录，需要长期留存时手动导出。
-
-详见 `docs/ARCHITECTURE.md`、`docs/ANDROID14_FORMAT_REVIEW.md`、`docs/DEVICE_ACCEPTANCE.md` 和交付测试报告。格式回归样本来自 Android 14 AOSP 输出逻辑，不是 HyperOS 实机采集。不能将主机测试或模拟时间跨度当作 24 小时实机验收。
+文档：[P0 设计与边界](docs/V030_P0_DESIGN.md)、[P0 实机验收](docs/V030_P0_ACCEPTANCE.md)、[本次测试报告](TESTING.md)。v0.2.0 历史说明与测试报告保存在 `docs/history/`，历史结果不等于本次结果。上游项目调研及文档中的实机反馈声明未独立复验，不计为已通过验收。

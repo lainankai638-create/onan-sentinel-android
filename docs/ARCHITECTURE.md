@@ -1,5 +1,7 @@
 # 架构与安全审计
 
+本页保留 v0.2.0 架构说明。v0.3.0 P0 的独立来源覆盖、schema 2、迁移备份和导出空间变化，以 [V030_P0_DESIGN.md](V030_P0_DESIGN.md) 为准。
+
 ## 数据流
 
 用户界面 → 可见前台服务（specialUse）→ Shizuku Binder → UserService（UID 2000）→ 固定只读命令 → 白名单解析/丢弃原始输出 → 应用私有 SQLite → 用户选择的 JSONL 文件。

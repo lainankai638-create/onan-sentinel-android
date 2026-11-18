@@ -9,7 +9,8 @@ import android.os.SystemClock
 import rikka.shizuku.Shizuku
 
 class ShizukuBridge(context: Context, private val api: ShizukuApi = PlatformShizukuApi,
-    private val clock: () -> Long = { SystemClock.elapsedRealtime() }, private val changed: (String) -> Unit) {
+    private val clock: () -> Long = { SystemClock.elapsedRealtime() },
+    serviceClass: Class<*> = ReadOnlyUserService::class.java, private val changed: (String) -> Unit) {
     private val epoch = BindingEpoch<IReadOnlyProbe>()
     val remote: IReadOnlyProbe? get() = synchronized(this) { epoch.remote }
     val generation: Long get() = synchronized(this) { epoch.generation }
@@ -19,8 +20,9 @@ class ShizukuBridge(context: Context, private val api: ShizukuApi = PlatformShiz
     private var retryAt = 0L
     private var failures = 0
     private var listening = false
-    private val args = Shizuku.UserServiceArgs(ComponentName(context, ReadOnlyUserService::class.java))
-        .daemon(false).processNameSuffix("readonly_probe").debuggable(BuildConfig.DEBUG).version(300)
+    private val args = Shizuku.UserServiceArgs(ComponentName(context, serviceClass))
+        .daemon(false).processNameSuffix(if(serviceClass == SnapshotUserService::class.java) "visible_snapshot" else "readonly_probe")
+        .debuggable(BuildConfig.DEBUG).version(BuildConfig.VERSION_CODE)
     private val received = Shizuku.OnBinderReceivedListener {
         synchronized(this) { release(); retryAt = 0 }
         changed("SHIZUKU_BINDER_RECEIVED")

@@ -1,0 +1,15 @@
+{
+  "environment": "Android 14 API 34 AOSP x86_64 emulator, no KVM",
+  "upgrade": "P0 code300 to preview.1 code301 using adb install -r; no uninstall or clear",
+  "beforeSchema": 2,
+  "afterSchema": 2,
+  "beforeEvents": 32,
+  "afterEvents": 34,
+  "allOldEventFieldsUnchanged": true,
+  "integrityAfter": "ok",
+  "scope": "Real emulator-generated P0 lifecycle/bind timeout history. Not user phone history; no successful MIUI samples.",
+  "finalApkSchema": 2,
+  "finalApkEvents": 38,
+  "allOriginalEventsUnchangedOnFinalApk": true,
+  "finalIntegrity": "ok"
+}

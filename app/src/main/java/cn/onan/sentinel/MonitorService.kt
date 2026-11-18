@@ -140,6 +140,7 @@ class MonitorService : Service() {
         }
         var usable = 0
         var failures = 0
+        val processBatch = ProcessBatch()
         for (target in Policy.targets.indices) {
             for (kind in listOf(Policy.PROCESS, Policy.APPOPS)) {
                 if (closing || paused || haltRequested) return
@@ -152,8 +153,12 @@ class MonitorService : Service() {
                 val started = System.currentTimeMillis()
                 var callFailed = false
                 val evidence = try {
-                    val json = JSONObject(ProbeLanes.forKind(kind).call(7000) { remote.sample(kind, target) })
-                    Evidence(json.getString("status"), json.getString("evidence").take(Policy.MAX_EVIDENCE))
+                    if(kind==Policy.PROCESS) processBatch.sample(generation,Policy.targets[target]) {
+                        ProcessSnapshots.fromJson(ProbeLanes.forKind(kind).call(7000) { remote.snapshot() })
+                    } else {
+                        val json = JSONObject(ProbeLanes.forKind(kind).call(7000) { remote.sample(kind, target) })
+                        Evidence(json.getString("status"), json.getString("evidence").take(Policy.MAX_EVIDENCE))
+                    }
                 } catch (e: Exception) {
                     callFailed = e !is IllegalStateException && e !is java.util.concurrent.RejectedExecutionException
                     Evidence("UNAVAILABLE", if(e is IllegalStateException || e is java.util.concurrent.RejectedExecutionException) "SOURCE_CALL_STILL_RUNNING" else "USER_SERVICE_CALL_FAILED_OR_TIMEOUT")
@@ -197,7 +202,7 @@ class MonitorService : Service() {
         fun serviceAction(action: String, code: Int) = PendingIntent.getService(this, code, Intent(this, MonitorService::class.java).setAction(action), PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
         val open = PendingIntent.getActivity(this, 0, Intent(this, MainActivity::class.java), PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
         return Notification.Builder(this, CHANNEL).setSmallIcon(R.drawable.ic_sentinel)
-            .setContentTitle("欧南哨兵 · 本地采样").setContentText(status).setContentIntent(open)
+            .setContentTitle("欧南哨兵 · 本地采样").setContentText(Chinese.status(status)).setContentIntent(open)
             .setOngoing(true).setOnlyAlertOnce(true).setCategory(Notification.CATEGORY_SERVICE)
             .addAction(Notification.Action.Builder(null, if (paused) "恢复" else "暂停", serviceAction(if (paused) START else PAUSE, 1)).build())
             .addAction(Notification.Action.Builder(null, "停止", serviceAction(STOP, 2)).build()).build()

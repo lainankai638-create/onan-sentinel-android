@@ -29,6 +29,7 @@ class ShizukuBridgeTest {
         }
         fun deliver(index: Int) = binds[index].onServiceConnected(ComponentName("test","service"), object:IReadOnlyProbe.Stub() {
             override fun sample(kind:Int,target:Int)="{}"
+            override fun snapshot()="{}"
             override fun destroy()=Unit
         })
     }

@@ -1,0 +1,643 @@
+{
+  "total": 91,
+  "passed": 91,
+  "tests": [
+    {
+      "class": "cn.onan.sentinel.Android14FormatTest",
+      "test": "vendorExtensionsRemainPartialAndDoNotLeakRawDetails",
+      "seconds": 0.065,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.Android14FormatTest",
+      "test": "reportedDefaultChangeIsComparedAndUnknownOutputResetsBaseline",
+      "seconds": 0.006,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.Android14FormatTest",
+      "test": "processNameMayContainSpacesWithoutInvalidatingOtherRows",
+      "seconds": 0.002,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.Android14FormatTest",
+      "test": "vendorHeadersNamesAndTruncationAreNotGuessed",
+      "seconds": 0.0,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.Android14FormatTest",
+      "test": "errorsTakePriorityOverEmptyMarker",
+      "seconds": 0.0,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.Android14FormatTest",
+      "test": "aospUidPrefixDoesNotIdentifyUnprefixedRowsAsPackageModes",
+      "seconds": 0.002,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.Android14FormatTest",
+      "test": "defaultModesAndWhitespaceAreNormalized",
+      "seconds": 0.012,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.Android14FormatTest",
+      "test": "noOperationsWithReportedDefaultIsRecognizedWithoutInventingAnOp",
+      "seconds": 0.001,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.Android14FormatTest",
+      "test": "emptyMarkerCannotHideUnknownOrContradictoryOutput",
+      "seconds": 0.001,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.CollectionSafetyTest",
+      "test": "failedCallCanBeRetriedWithoutReplacingExecutor",
+      "seconds": 0.006,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.CollectionSafetyTest",
+      "test": "pauseStopAndResumeRejectEveryOldResult",
+      "seconds": 0.002,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.CollectionSafetyTest",
+      "test": "lateConnectedCallbacksCannotReplaceCurrentRemote",
+      "seconds": 0.0,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.CollectionSafetyTest",
+      "test": "uninterruptibleTimeoutCannotCreateThreadsOrQueueMoreCalls",
+      "seconds": 0.104,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.FailureReasonTest",
+      "test": "unknownExceptionTextNeverLeaksIntoStatus",
+      "seconds": 0.002,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.FailureReasonTest",
+      "test": "migrationSpaceFailureRemainsVisibleThroughWrapper",
+      "seconds": 0.0,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.LegacyCompatibilityTest",
+      "test": "unknownLegacySchemaIsRejectedWithoutReset",
+      "seconds": 5.616,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.LegacyCompatibilityTest",
+      "test": "missingLegacyDatabaseIsNotCreated",
+      "seconds": 0.055,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.LegacyCompatibilityTest",
+      "test": "v011SchemaRemainsByteIdenticalAfterMonitoringAndCleanup",
+      "seconds": 0.346,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.MigrationTest",
+      "test": "migrationPreservesAutoincrementHighWatermarkAfterDeletion",
+      "seconds": 0.123,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.MigrationTest",
+      "test": "insufficientBackupSpaceLeavesOriginalSchemaAndRowsUntouched",
+      "seconds": 0.043,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.MigrationTest",
+      "test": "fullRowQuotaMigrationDoesNotPruneOldEvents",
+      "seconds": 2.977,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.MigrationTest",
+      "test": "migrationPreservesEveryOriginalFieldAndKeepsVerifiedV1Backup",
+      "seconds": 0.067,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.MigrationTest",
+      "test": "unknownVersionOrShapeRefusesWithoutReset",
+      "seconds": 0.052,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.MigrationTest",
+      "test": "interruptedUpgradeRollsBackAndCanRetryUsingSameBackup",
+      "seconds": 0.067,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.NavigationTest",
+      "test": "settingsAndComponentDetailsAreReachable",
+      "seconds": 3.643,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.NavigationTest",
+      "test": "sensitiveAndNetworkPagesStateEvidenceLimits",
+      "seconds": 1.352,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.NavigationTest",
+      "test": "fourTabsOpenRealPagesWithTruthfulEmptyStates",
+      "seconds": 0.604,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.NetworkExperimentTest",
+      "test": "securityExceptionIsExplicit",
+      "seconds": 0.025,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.NetworkExperimentTest",
+      "test": "boundedQueryRange",
+      "seconds": 0.0,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.NetworkExperimentTest",
+      "test": "negativeOrOverflowCountersAreNotTraffic",
+      "seconds": 0.0,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.NetworkExperimentTest",
+      "test": "emptyBucketsAreUnavailableNotZero",
+      "seconds": 0.0,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.NetworkExperimentTest",
+      "test": "revokedPermissionDropsEarlierBuckets",
+      "seconds": 0.002,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.NetworkExperimentTest",
+      "test": "realZeroBucketIsDifferentFromNoBuckets",
+      "seconds": 0.0,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.NetworkExperimentTest",
+      "test": "sharedUidIsQueriedOncePerTransport",
+      "seconds": 0.001,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.NetworkExperimentTest",
+      "test": "disablingDuringQueryDropsLateResults",
+      "seconds": 0.0,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.NetworkExperimentTest",
+      "test": "actualBucketBoundsAreRetainedNotInterpolated",
+      "seconds": 0.0,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.NetworkExperimentTest",
+      "test": "noUsagePermissionNeverQueries",
+      "seconds": 0.0,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.NetworkExperimentTest",
+      "test": "disabledByDefaultNeverQueries",
+      "seconds": 0.0,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.NetworkExperimentTest",
+      "test": "reenableDoesNotAcceptEarlierTicket",
+      "seconds": 0.0,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.PolicyTest",
+      "test": "appopsUnknownOutputNeverBecomesEmptySuccess",
+      "seconds": 0.001,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.PolicyTest",
+      "test": "processNamesMatchBoundaryAndIncludeSubprocess",
+      "seconds": 0.0,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.PolicyTest",
+      "test": "fixedCommandsContainNoInterpreterOrMutation",
+      "seconds": 0.001,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.PolicyTest",
+      "test": "emptyOrMalformedProcessListingIsNotAbsence",
+      "seconds": 0.0,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.PolicyTest",
+      "test": "appopsDropsPrivateAttributionAndRelativeTimes",
+      "seconds": 0.001,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.PolicyTest",
+      "test": "invalidCommandsRejected",
+      "seconds": 0.035,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.PolicyTest",
+      "test": "baselineInvalidatedAfterUnavailableSample",
+      "seconds": 0.0,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.PolicyTest",
+      "test": "twentyFourHourSimulationDoesNotClaimDeviceUptime",
+      "seconds": 0.006,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.PolicyTest",
+      "test": "absenceOnlyMeansNotObserved",
+      "seconds": 0.001,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.ShizukuBridgeTest",
+      "test": "missingPermissionOrRootModeNeverBinds",
+      "seconds": 0.029,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.ShizukuBridgeTest",
+      "test": "reconnectUsesNewEpochAndBindTimeoutHasBackoff",
+      "seconds": 0.087,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.ShizukuBridgeTest",
+      "test": "revokeAfterReadRejectsCommitAndHealthWhilePausedRemainsAccurate",
+      "seconds": 0.031,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.ShizukuBridgeTest",
+      "test": "delayedCallbackFromReleasedBindCannotOverwriteNewConnection",
+      "seconds": 0.074,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.SourceCoverageTest",
+      "test": "sqliteFullRollsBackWholeSampleWithoutResettingOldEvidence",
+      "seconds": 0.075,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.SourceCoverageTest",
+      "test": "reportUsesRetainedSourceIntervalsAndFlagsClockReversal",
+      "seconds": 0.053,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.SourceCoverageTest",
+      "test": "onlyRecoveredSourceClosesAndPartialSuccessDoesNotMaskOtherTargets",
+      "seconds": 0.139,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.SourceCoverageTest",
+      "test": "auxiliaryRetentionIsBoundedAndCleanupCannotRunWhileActive",
+      "seconds": 1.194,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.SourceCoverageTest",
+      "test": "lateOldServiceShutdownCannotCloseReplacementSession",
+      "seconds": 0.037,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.SourceCoverageTest",
+      "test": "knownPauseAndUnknownLossBoundsRemainDistinctAndFailuresPersist",
+      "seconds": 0.063,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.SourceCoverageTest",
+      "test": "failedExportRemovesSpoolAndDoesNotChangeDatabase",
+      "seconds": 0.032,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.StoreTest",
+      "test": "repeatedDisconnectsDoNotInventGapClosures",
+      "seconds": 0.068,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.StoreTest",
+      "test": "dataSurvivesReopenAndUncleanSessionHasUncertainGap",
+      "seconds": 0.045,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.StoreTest",
+      "test": "databaseAndRowsRemainBoundedUnderLoad",
+      "seconds": 1.95,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.StoreTest",
+      "test": "blockedExportDoesNotBlockRecordingOrStopping",
+      "seconds": 0.029,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.StoreTest",
+      "test": "earlierGapBoundIsPreservedAfterDelayedDisconnectDetection",
+      "seconds": 0.046,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.StoreTest",
+      "test": "transactionFailureDoesNotLeaveHalfSession",
+      "seconds": 0.043,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.StoreTest",
+      "test": "cleanupRefusesActiveSessionAndPreservesMetadata",
+      "seconds": 0.08,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.StoreTest",
+      "test": "exportRedactsPidTargetsAndPreciseTimestamps",
+      "seconds": 0.044,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.VisibleFeaturesTest",
+      "test": "truncatedDuplicateAndNegativePidsAreNotSuccessfulSnapshots",
+      "seconds": 0.068,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.VisibleFeaturesTest",
+      "test": "reportGapsAreClippedToRangeAndFiltered",
+      "seconds": 0.088,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.VisibleFeaturesTest",
+      "test": "keysetPagingDoesNotRepeatRows",
+      "seconds": 0.044,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.VisibleFeaturesTest",
+      "test": "boundedLaneSupportsImmediateSequentialCompletionAndFailure",
+      "seconds": 0.084,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.VisibleFeaturesTest",
+      "test": "reportBundleRedactsArbitraryEvidenceAndIsValidJsonl",
+      "seconds": 0.073,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.VisibleFeaturesTest",
+      "test": "largeTargetPidSetIsUnavailableRatherThanSilentlyTruncated",
+      "seconds": 0.039,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.VisibleFeaturesTest",
+      "test": "numericAndroid14SnapshotKeepsOtherUsersAndNativeProcesses",
+      "seconds": 0.056,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.VisibleFeaturesTest",
+      "test": "thirdPartyClassificationUsesPackageFlags",
+      "seconds": 0.028,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.VisibleFeaturesTest",
+      "test": "failedBatchNeverBecomesSuccessfulAbsence",
+      "seconds": 0.064,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.VisibleFeaturesTest",
+      "test": "mismatchedUidDoesNotGetAttributed",
+      "seconds": 0.024,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.VisibleFeaturesTest",
+      "test": "oneBatchReusesOneObservationAndExcludesOtherUsers",
+      "seconds": 0.065,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.VisibleFeaturesTest",
+      "test": "arbitraryCommandLineAndUrlAreNotDisplayedAsAppNames",
+      "seconds": 0.029,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.VisibleFeaturesTest",
+      "test": "mixedSharedUidAndIsolatedUidAreUnknown",
+      "seconds": 0.026,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.VisibleFeaturesTest",
+      "test": "reportClockReversalIsDisclosed",
+      "seconds": 0.082,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.VisibleFeaturesTest",
+      "test": "reportSaveFailureCleansPrivateSpoolWithoutMutatingHistory",
+      "seconds": 0.085,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.VisibleFeaturesTest",
+      "test": "snapshotOutputIsBounded",
+      "seconds": 0.032,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.VisibleFeaturesTest",
+      "test": "emptyOperationsAndDefaultRemainAmbiguousInChinese",
+      "seconds": 0.077,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.VisibleFeaturesTest",
+      "test": "reportOpenSessionsNeverInventUptime",
+      "seconds": 0.071,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.VisibleFeaturesTest",
+      "test": "userColumnVendorVariantFailsClosed",
+      "seconds": 0.039,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.VisibleFeaturesTest",
+      "test": "sharedUidKeepsAllCandidatesDespiteNameMatch",
+      "seconds": 0.069,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.VisibleFeaturesTest",
+      "test": "reportCountsSourceAttemptsAndIntervalsWithoutMixingSources",
+      "seconds": 0.053,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.VisibleFeaturesTest",
+      "test": "timeFilterIsHalfOpenAndParameterized",
+      "seconds": 0.06,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.VisibleFeaturesTest",
+      "test": "chineseAllowNeverClaimsAccess",
+      "seconds": 0.027,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    },
+    {
+      "class": "cn.onan.sentinel.VisibleFeaturesTest",
+      "test": "snapshotJsonRoundTripAndErrorWithoutRows",
+      "seconds": 0.062,
+      "result": "passed",
+      "environment": "host JUnit/Robolectric API34 native SQLite; constructed inputs"
+    }
+  ]
+}

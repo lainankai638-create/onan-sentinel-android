@@ -1,0 +1,11 @@
+
+cn.onan.sentinel.UiAcceptanceTest:s_glBindAttribLocation: bind attrib 0 name position
+s_glBindAttribLocation: bind attrib 1 name color
+s_glBindAttribLocation: bind attrib 2 name localCoord
+.
+
+Time: 74.143
+
+OK (1 test)
+
+

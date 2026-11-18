@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="cn.onan.sentinel.LegacyCompatibilityTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-11-18T11:17:58" hostname="386ecc2d0c58" time="6.032">
+  <properties/>
+  <testcase name="unknownLegacySchemaIsRejectedWithoutReset" classname="cn.onan.sentinel.LegacyCompatibilityTest" time="5.616"/>
+  <testcase name="missingLegacyDatabaseIsNotCreated" classname="cn.onan.sentinel.LegacyCompatibilityTest" time="0.055"/>
+  <testcase name="v011SchemaRemainsByteIdenticalAfterMonitoringAndCleanup" classname="cn.onan.sentinel.LegacyCompatibilityTest" time="0.346"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

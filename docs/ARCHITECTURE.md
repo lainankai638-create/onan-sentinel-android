@@ -2,6 +2,16 @@
 
 本页保留 v0.2.0 架构说明。v0.3.0 P0 的独立来源覆盖、schema 2、迁移备份和导出空间变化，以 [V030_P0_DESIGN.md](V030_P0_DESIGN.md) 为准。
 
+v0.3.0-preview.1 在上述架构上增加下列路径，未改数据库 schema：
+
+- Material 3 Activity → 有界本地分页查询；UiSignals 只在可见时订阅，更新合并350ms，无轮询。
+- 用户刷新 → 独立 SnapshotUserService → 同一固定 ps 白名单 → UID/PID/净化名称 → PackageManager 只读包候选；列表仅驻内存。后台 ProcessBatch 每轮共享一个快照，仍按来源×目标独立验权与入库。
+- 默认关闭的手动 NetworkStats 实验 → capability / 用户 Usage Access → 有界只读统计 → UID 组事件。无 VPNService、网络连接或设置写入；禁用/离屏使代次失效，迟到结果不接收。
+- 报告半开筛选 → 私有流式 Markdown/JSONL ZIP → 释放数据库锁 → 用户确认的 SAF 位置。记录编号/来源/作用域与时间取整规则随包导出；不保留任意原始文本。
+- BoundedCallLane 保持单执行线程与 busy 门禁，增加一个仅供已结束调用交接的有界槽与完成同步，消除完成后立刻再次调用的竞态。未结束（含超时但未响应中断）时仍拒绝所有后续提交，不堆积任务。
+
+这些属于本候选的实现边界；设备验收见 [可见功能验收](V030_VISIBLE_ACCEPTANCE.md)。下面旧版本表中的 schema 1、导出方式等仅是历史说明。
+
 ## 数据流
 
 用户界面 → 可见前台服务（specialUse）→ Shizuku Binder → UserService（UID 2000）→ 固定只读命令 → 白名单解析/丢弃原始输出 → 应用私有 SQLite → 用户选择的 JSONL 文件。

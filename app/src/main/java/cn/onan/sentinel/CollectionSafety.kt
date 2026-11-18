@@ -6,15 +6,19 @@ import java.util.concurrent.atomic.AtomicBoolean
 /** One bounded lane per evidence source, shared across service restarts in this app process. */
 class BoundedCallLane {
     private val busy = AtomicBoolean(false)
-    private val executor = ThreadPoolExecutor(0, 1, 30, TimeUnit.SECONDS, SynchronousQueue(),
+    // One handoff slot covers the tiny interval between callable completion and worker return.
+    // busy still rejects every submission while an operation (including a timed-out one) runs.
+    private val executor = ThreadPoolExecutor(0, 1, 30, TimeUnit.SECONDS, ArrayBlockingQueue(1),
         { task -> Thread(task, "sentinel-bounded-probe").apply { isDaemon = true } }, ThreadPoolExecutor.AbortPolicy())
     fun <T> call(timeoutMs: Long, action: () -> T): T {
         check(busy.compareAndSet(false, true)) { "SOURCE_CALL_STILL_RUNNING" }
+        val finished = CountDownLatch(1)
         val future = FutureTask(Callable(action))
-        try { executor.execute { try { future.run() } finally { busy.set(false) } } }
+        try { executor.execute { try { future.run() } finally { busy.set(false);finished.countDown() } } }
         catch (e: RejectedExecutionException) { busy.set(false); throw e }
         try { return future.get(timeoutMs, TimeUnit.MILLISECONDS) }
         catch (e: Exception) { future.cancel(true); throw e }
+        finally { if(future.isDone && !future.isCancelled) finished.await(timeoutMs,TimeUnit.MILLISECONDS) }
     }
     fun isBusy() = busy.get()
 }

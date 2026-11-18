@@ -1,0 +1,31 @@
+{
+  "sourceCommit": "9d7386b93cf89d93cf1f0922bf2d166d87f42b2c",
+  "baselinePR2": "98e24b454dfc7912b4203a73859485ebe8a20f07",
+  "applicationId": "cn.onan.sentinel.preview",
+  "versionName": "0.3.0-preview.1",
+  "versionCode": 301,
+  "schema": 2,
+  "certificateSha256": "22b00efcde1f683588919a99893917074063928ba845bea6fa9af2a70cace4ce",
+  "apkSha256": "b15962c055d7e01588709724186dede3431f36928d4408a22df4048a1f0d4ab3",
+  "old52TestsPassed": true,
+  "hostTests": 91,
+  "phoneInstalledCertificateVerified": false,
+  "phoneDatabaseVerified": false,
+  "phoneTouched": false,
+  "real24hCompleted": false,
+  "batteryVerified": false,
+  "hyperOsVerified": false,
+  "networkNonzeroTrafficVerified": false,
+  "releaseAuthorized": false,
+  "sourceCommitScope": "Android implementation. Delivery documentation and emulator matrix driver are included in the final delivery commit.",
+  "finalApkUiMatrix": {
+    "360dp-font2-dark": "passed",
+    "360dp-font1-light": "passed",
+    "393dp-font2-dark": "passed",
+    "320dp-font1-light": "passed",
+    "320dp-font2-dark": "passed",
+    "393dp-font1-light": "passed"
+  },
+  "finalApkScreenshots": 48,
+  "finalApkLiveSourcesTest": "passed: real Shizuku snapshot and NetworkStats empty buckets, see live-sources-final.log"
+}

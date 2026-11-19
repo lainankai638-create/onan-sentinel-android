@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="cn.onan.sentinel.ShizukuBridgeTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-11-18T18:10:25" hostname="386ecc2d0c58" time="0.151">
+  <properties/>
+  <testcase name="missingPermissionOrRootModeNeverBinds" classname="cn.onan.sentinel.ShizukuBridgeTest" time="0.051"/>
+  <testcase name="reconnectUsesNewEpochAndBindTimeoutHasBackoff" classname="cn.onan.sentinel.ShizukuBridgeTest" time="0.05"/>
+  <testcase name="revokeAfterReadRejectsCommitAndHealthWhilePausedRemainsAccurate" classname="cn.onan.sentinel.ShizukuBridgeTest" time="0.027"/>
+  <testcase name="delayedCallbackFromReleasedBindCannotOverwriteNewConnection" classname="cn.onan.sentinel.ShizukuBridgeTest" time="0.023"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

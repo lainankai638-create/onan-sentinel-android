@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="cn.onan.sentinel.ResourceDiagnosticsTest" tests="18" skipped="0" failures="0" errors="0" timestamp="2026-11-18T18:10:01" hostname="386ecc2d0c58" time="24.803">
+  <properties/>
+  <testcase name="validUnchangedCountersCanReportZeroAndMulticoreCanExceed100" classname="cn.onan.sentinel.ResourceDiagnosticsTest" time="21.696"/>
+  <testcase name="failureExportRemainsUnavailableAndDoesNotInventSamples" classname="cn.onan.sentinel.ResourceDiagnosticsTest" time="0.042"/>
+  <testcase name="representativesAreBoundedDistinctAndUnavailableRolesNotFabricated" classname="cn.onan.sentinel.ResourceDiagnosticsTest" time="0.046"/>
+  <testcase name="inaccessibleMetadataRetainsDiscoveryAndFailureNotInventedNumbers" classname="cn.onan.sentinel.ResourceDiagnosticsTest" time="0.061"/>
+  <testcase name="truncatedNegativeAndWrongPidStatFailClosed" classname="cn.onan.sentinel.ResourceDiagnosticsTest" time="0.032"/>
+  <testcase name="pidReusedInsideOneReadPreventsCpuIdentityVerification" classname="cn.onan.sentinel.ResourceDiagnosticsTest" time="0.029"/>
+  <testcase name="diagnosticScreenIsManualAndDoesNotCreateHistoryDatabase" classname="cn.onan.sentinel.ResourceDiagnosticsTest" time="2.258"/>
+  <testcase name="statWithSpacesAndParenthesesUsesCorrectKernelFieldOffsets" classname="cn.onan.sentinel.ResourceDiagnosticsTest" time="0.027"/>
+  <testcase name="twoValidSamplesUseTicksHzAndActualElapsedInterval" classname="cn.onan.sentinel.ResourceDiagnosticsTest" time="0.044"/>
+  <testcase name="invalidIntervalHzAndCounterReversalAreExplicit" classname="cn.onan.sentinel.ResourceDiagnosticsTest" time="0.028"/>
+  <testcase name="firstCpuSampleIsUnavailableNeverZero" classname="cn.onan.sentinel.ResourceDiagnosticsTest" time="0.038"/>
+  <testcase name="rssIsStatusKiBNotStatPagesOrPss" classname="cn.onan.sentinel.ResourceDiagnosticsTest" time="0.057"/>
+  <testcase name="readableStatusWithoutStatIsReportedButIdentityUnverified" classname="cn.onan.sentinel.ResourceDiagnosticsTest" time="0.027"/>
+  <testcase name="oneManualRunOnlyReadsTwoRoundsAndWaitsOnce" classname="cn.onan.sentinel.ResourceDiagnosticsTest" time="0.062"/>
+  <testcase name="reusedPidOrChangedUidNeverCombinesCpuCounters" classname="cn.onan.sentinel.ResourceDiagnosticsTest" time="0.03"/>
+  <testcase name="noNewShellCommandsOrPathInputsAndOnlyMetadataFiles" classname="cn.onan.sentinel.ResourceDiagnosticsTest" time="0.183"/>
+  <testcase name="missingRssAndUnexpectedUnitsAreDifferentFromRealZero" classname="cn.onan.sentinel.ResourceDiagnosticsTest" time="0.073"/>
+  <testcase name="exportRedactsIdentityButPreservesResourceNumbersAndReasons" classname="cn.onan.sentinel.ResourceDiagnosticsTest" time="0.066"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

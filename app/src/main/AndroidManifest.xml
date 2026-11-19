@@ -18,6 +18,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".ResourceDiagnosticActivity" android:exported="false" />
         <service android:name=".MonitorService" android:exported="false" android:foregroundServiceType="specialUse">
             <property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
                 android:value="User-started visible local monitoring of selected system component process and AppOps state via Shizuku; no content capture or network traffic capture." />

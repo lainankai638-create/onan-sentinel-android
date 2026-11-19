@@ -21,7 +21,7 @@ class ShizukuBridge(context: Context, private val api: ShizukuApi = PlatformShiz
     private var failures = 0
     private var listening = false
     private val args = Shizuku.UserServiceArgs(ComponentName(context, serviceClass))
-        .daemon(false).processNameSuffix(if(serviceClass == SnapshotUserService::class.java) "visible_snapshot" else "readonly_probe")
+        .daemon(false).processNameSuffix(when(serviceClass) { SnapshotUserService::class.java->"visible_snapshot";ResourceUserService::class.java->"resource_diagnostic";else->"readonly_probe" })
         .debuggable(BuildConfig.DEBUG).version(BuildConfig.VERSION_CODE)
     private val received = Shizuku.OnBinderReceivedListener {
         synchronized(this) { release(); retryAt = 0 }

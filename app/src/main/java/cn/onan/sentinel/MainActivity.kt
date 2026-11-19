@@ -129,6 +129,7 @@ class MainActivity : AppCompatActivity() {
             button("启动 / 恢复监控") { startMonitoring() }
             if(MonitorService.live) { button("暂停采集") { command(MonitorService.PAUSE) };button("停止监控") { command(MonitorService.STOP) } }
             button("授权与监控设置") { go("settings") }
+            button("资源能力诊断") { startActivity(Intent(this@MainActivity,ResourceDiagnosticActivity::class.java)) }
         }
         card("证据覆盖范围","不代表全面安全检测。后台仅关注主用户的 3 个系统组件。进程可见状态与 AppOps 模式分别采样；不读取通信正文、不录音、不抓包。") {
             button("查看可见运行进程") { go("processes") };button("敏感操作模式") { go("sensitive") };button("网络统计实验") { go("network") }

@@ -1,4 +1,10 @@
-# 欧南 · 系统网络哨兵 v0.3.0 可见功能候选版
+# 欧南 · 系统网络哨兵：进程资源能力诊断候选版
+
+本分支 `codex/process-resource-diagnostic` 基于 PR #3 的 `7171564bf0e2d3cac2ee23ad3ad18b9a2fff771b`，版本 **0.3.0-resource-preview.1 / 302**。新增「总览 → 资源能力诊断」手动入口：最多 4 个可见代表进程、两次元数据采样、CPU 差值与 RSS、逐项来源/失败原因、本地确认后脱敏 JSON 导出。仍为 `cn.onan.sentinel.preview`，沿用 preview 签名，数据库 schema 2 不变。
+
+本轮 **22 项相关主机测试通过，一次 APK 构建成功**；未重新执行全套测试、Lint 或截图矩阵，尚未在 Redmi K40S 上验证。详见 [本轮操作、验收及测试报告](docs/RESOURCE_DIAGNOSTIC.md) 与 [APK、测试 XML、构建日志及校验文件](artifacts/resource-diagnostic/)。以下内容保留为 PR #3 的功能基线说明，其中版本与测试结论仅属于该基线。
+
+## PR #3 功能基线（0.3.0-preview.1）
 
 在 PR #2 的 P0 基线 `98e24b454dfc7912b4203a73859485ebe8a20f07` 上继续实现 R03-03、R03-05、R03-06、R03-07。独立分支 `codex/v0.3.0-features`，Draft PR 基于 `codex/v0.3.0`；不修改 PR #2、PR #1 或 main，不发布正式版。P0 原说明保存在 [历史文档](docs/history/V030_P0_README.md)。
 

@@ -1,0 +1,154 @@
+{
+  "version": "0.3.0-resource-preview.1",
+  "versionCode": 302,
+  "applicationId": "cn.onan.sentinel.preview",
+  "baseCommit": "7171564bf0e2d3cac2ee23ad3ad18b9a2fff771b",
+  "tests": 22,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "assembleDebug": "PASSED",
+  "buildInvocations": 1,
+  "certificateMatchesBaseline": true,
+  "phoneCertificateVerified": false,
+  "realDeviceVerified": false,
+  "lintRun": false,
+  "fullSuiteRun": false,
+  "emulatorRun": false,
+  "suites": [
+    {
+      "name": "cn.onan.sentinel.ResourceDiagnosticsTest",
+      "tests": "18",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-11-18T18:10:01",
+      "hostname": "386ecc2d0c58",
+      "time": "24.803",
+      "testCases": [
+        {
+          "name": "validUnchangedCountersCanReportZeroAndMulticoreCanExceed100",
+          "classname": "cn.onan.sentinel.ResourceDiagnosticsTest",
+          "time": "21.696"
+        },
+        {
+          "name": "failureExportRemainsUnavailableAndDoesNotInventSamples",
+          "classname": "cn.onan.sentinel.ResourceDiagnosticsTest",
+          "time": "0.042"
+        },
+        {
+          "name": "representativesAreBoundedDistinctAndUnavailableRolesNotFabricated",
+          "classname": "cn.onan.sentinel.ResourceDiagnosticsTest",
+          "time": "0.046"
+        },
+        {
+          "name": "inaccessibleMetadataRetainsDiscoveryAndFailureNotInventedNumbers",
+          "classname": "cn.onan.sentinel.ResourceDiagnosticsTest",
+          "time": "0.061"
+        },
+        {
+          "name": "truncatedNegativeAndWrongPidStatFailClosed",
+          "classname": "cn.onan.sentinel.ResourceDiagnosticsTest",
+          "time": "0.032"
+        },
+        {
+          "name": "pidReusedInsideOneReadPreventsCpuIdentityVerification",
+          "classname": "cn.onan.sentinel.ResourceDiagnosticsTest",
+          "time": "0.029"
+        },
+        {
+          "name": "diagnosticScreenIsManualAndDoesNotCreateHistoryDatabase",
+          "classname": "cn.onan.sentinel.ResourceDiagnosticsTest",
+          "time": "2.258"
+        },
+        {
+          "name": "statWithSpacesAndParenthesesUsesCorrectKernelFieldOffsets",
+          "classname": "cn.onan.sentinel.ResourceDiagnosticsTest",
+          "time": "0.027"
+        },
+        {
+          "name": "twoValidSamplesUseTicksHzAndActualElapsedInterval",
+          "classname": "cn.onan.sentinel.ResourceDiagnosticsTest",
+          "time": "0.044"
+        },
+        {
+          "name": "invalidIntervalHzAndCounterReversalAreExplicit",
+          "classname": "cn.onan.sentinel.ResourceDiagnosticsTest",
+          "time": "0.028"
+        },
+        {
+          "name": "firstCpuSampleIsUnavailableNeverZero",
+          "classname": "cn.onan.sentinel.ResourceDiagnosticsTest",
+          "time": "0.038"
+        },
+        {
+          "name": "rssIsStatusKiBNotStatPagesOrPss",
+          "classname": "cn.onan.sentinel.ResourceDiagnosticsTest",
+          "time": "0.057"
+        },
+        {
+          "name": "readableStatusWithoutStatIsReportedButIdentityUnverified",
+          "classname": "cn.onan.sentinel.ResourceDiagnosticsTest",
+          "time": "0.027"
+        },
+        {
+          "name": "oneManualRunOnlyReadsTwoRoundsAndWaitsOnce",
+          "classname": "cn.onan.sentinel.ResourceDiagnosticsTest",
+          "time": "0.062"
+        },
+        {
+          "name": "reusedPidOrChangedUidNeverCombinesCpuCounters",
+          "classname": "cn.onan.sentinel.ResourceDiagnosticsTest",
+          "time": "0.03"
+        },
+        {
+          "name": "noNewShellCommandsOrPathInputsAndOnlyMetadataFiles",
+          "classname": "cn.onan.sentinel.ResourceDiagnosticsTest",
+          "time": "0.183"
+        },
+        {
+          "name": "missingRssAndUnexpectedUnitsAreDifferentFromRealZero",
+          "classname": "cn.onan.sentinel.ResourceDiagnosticsTest",
+          "time": "0.073"
+        },
+        {
+          "name": "exportRedactsIdentityButPreservesResourceNumbersAndReasons",
+          "classname": "cn.onan.sentinel.ResourceDiagnosticsTest",
+          "time": "0.066"
+        }
+      ]
+    },
+    {
+      "name": "cn.onan.sentinel.ShizukuBridgeTest",
+      "tests": "4",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-11-18T18:10:25",
+      "hostname": "386ecc2d0c58",
+      "time": "0.151",
+      "testCases": [
+        {
+          "name": "missingPermissionOrRootModeNeverBinds",
+          "classname": "cn.onan.sentinel.ShizukuBridgeTest",
+          "time": "0.051"
+        },
+        {
+          "name": "reconnectUsesNewEpochAndBindTimeoutHasBackoff",
+          "classname": "cn.onan.sentinel.ShizukuBridgeTest",
+          "time": "0.05"
+        },
+        {
+          "name": "revokeAfterReadRejectsCommitAndHealthWhilePausedRemainsAccurate",
+          "classname": "cn.onan.sentinel.ShizukuBridgeTest",
+          "time": "0.027"
+        },
+        {
+          "name": "delayedCallbackFromReleasedBindCannotOverwriteNewConnection",
+          "classname": "cn.onan.sentinel.ShizukuBridgeTest",
+          "time": "0.023"
+        }
+      ]
+    }
+  ]
+}

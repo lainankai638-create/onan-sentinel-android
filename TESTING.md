@@ -1,4 +1,8 @@
-# v0.3.0-preview.1 测试报告
+# 测试报告索引
+
+当前资源诊断候选版 **0.3.0-resource-preview.1 / 302** 的结果在 [RESOURCE_DIAGNOSTIC.md](docs/RESOURCE_DIAGNOSTIC.md)：22 项相关主机测试通过、一次 assembleDebug 成功；没有重跑全套测试、Lint、48 张截图矩阵或进行目标手机验证。下文是 PR #3 基线的历史报告，不代表本次 APK 的实机或全量回归结果。
+
+## v0.3.0-preview.1 历史测试报告
 
 日期：2026-11-18（Asia/Shanghai）。稳定基线 PR #2：`98e24b454dfc7912b4203a73859485ebe8a20f07`。本轮分支 `codex/v0.3.0-features`。**候选功能已实现并通过以下限定验证；Redmi K40S、24h 与耗电退出验收未完成，保持 Draft。**
 

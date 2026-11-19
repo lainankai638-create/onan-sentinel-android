@@ -12,6 +12,14 @@ open class ReadOnlyUserService : IReadOnlyProbe.Stub() {
 
     @Synchronized override fun sample(kind: Int, target: Int): String = execute(kind,target,false)
     @Synchronized override fun snapshot(): String = execute(Policy.PROCESS,0,true)
+    @Synchronized override fun resources(): String {
+        if(Process.myUid()!=2000) return ResourceDiagnostics.failure("SHIZUKU_ADB_SHELL_REQUIRED").toString()
+        val visible=ProcessSnapshots.fromJson(execute(Policy.PROCESS,0,true))
+        if(visible.status!="OK") return ResourceDiagnostics.failure(visible.reason).toString()
+        val hz=try { android.system.Os.sysconf(android.system.OsConstants._SC_CLK_TCK) } catch(_:Exception) { -1L }
+        return ResourceDiagnostics.collect(visible.rows,Process.myPid(),hz,ProcMetadata::read,
+            android.os.SystemClock::elapsedRealtimeNanos,Thread::sleep).toString()
+    }
     private fun execute(kind: Int, target: Int, snapshot: Boolean): String {
         if (Process.myUid() != 2000) return result("DENIED", "SHIZUKU_ADB_SHELL_REQUIRED")
         val command = try { Policy.command(kind, target) } catch (_: IllegalArgumentException) {
@@ -56,3 +64,4 @@ open class ReadOnlyUserService : IReadOnlyProbe.Stub() {
 
 /** Separate component identity prevents an on-screen snapshot from unbinding the monitor service. */
 class SnapshotUserService : ReadOnlyUserService()
+class ResourceUserService : ReadOnlyUserService()

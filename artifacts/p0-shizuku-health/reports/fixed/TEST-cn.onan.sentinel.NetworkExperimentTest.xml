@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="cn.onan.sentinel.NetworkExperimentTest" tests="12" skipped="0" failures="0" errors="0" timestamp="2026-11-20T17:18:10" hostname="78cd01167455" time="0.011">
+  <properties/>
+  <testcase name="securityExceptionIsExplicit" classname="cn.onan.sentinel.NetworkExperimentTest" time="0.005"/>
+  <testcase name="boundedQueryRange" classname="cn.onan.sentinel.NetworkExperimentTest" time="0.001"/>
+  <testcase name="negativeOrOverflowCountersAreNotTraffic" classname="cn.onan.sentinel.NetworkExperimentTest" time="0.0"/>
+  <testcase name="emptyBucketsAreUnavailableNotZero" classname="cn.onan.sentinel.NetworkExperimentTest" time="0.0"/>
+  <testcase name="revokedPermissionDropsEarlierBuckets" classname="cn.onan.sentinel.NetworkExperimentTest" time="0.002"/>
+  <testcase name="realZeroBucketIsDifferentFromNoBuckets" classname="cn.onan.sentinel.NetworkExperimentTest" time="0.0"/>
+  <testcase name="sharedUidIsQueriedOncePerTransport" classname="cn.onan.sentinel.NetworkExperimentTest" time="0.001"/>
+  <testcase name="disablingDuringQueryDropsLateResults" classname="cn.onan.sentinel.NetworkExperimentTest" time="0.001"/>
+  <testcase name="actualBucketBoundsAreRetainedNotInterpolated" classname="cn.onan.sentinel.NetworkExperimentTest" time="0.001"/>
+  <testcase name="noUsagePermissionNeverQueries" classname="cn.onan.sentinel.NetworkExperimentTest" time="0.0"/>
+  <testcase name="disabledByDefaultNeverQueries" classname="cn.onan.sentinel.NetworkExperimentTest" time="0.0"/>
+  <testcase name="reenableDoesNotAcceptEarlierTicket" classname="cn.onan.sentinel.NetworkExperimentTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

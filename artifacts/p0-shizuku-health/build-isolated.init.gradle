@@ -1,0 +1,8 @@
+gradle.beforeProject { project ->
+    project.pluginManager.withPlugin("com.android.application") {
+        project.extensions.getByName("androidComponents").finalizeDsl { android ->
+            android.buildTypes.debug.applicationIdSuffix = ".p0health"
+            android.buildTypes.debug.versionNameSuffix = "-p0health"
+        }
+    }
+}

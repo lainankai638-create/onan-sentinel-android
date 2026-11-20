@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="cn.onan.sentinel.MigrationTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-11-20T17:17:59" hostname="78cd01167455" time="4.998">
+  <properties/>
+  <testcase name="migrationPreservesAutoincrementHighWatermarkAfterDeletion" classname="cn.onan.sentinel.MigrationTest" time="0.174"/>
+  <testcase name="insufficientBackupSpaceLeavesOriginalSchemaAndRowsUntouched" classname="cn.onan.sentinel.MigrationTest" time="0.075"/>
+  <testcase name="fullRowQuotaMigrationDoesNotPruneOldEvents" classname="cn.onan.sentinel.MigrationTest" time="4.414"/>
+  <testcase name="migrationPreservesEveryOriginalFieldAndKeepsVerifiedV1Backup" classname="cn.onan.sentinel.MigrationTest" time="0.17"/>
+  <testcase name="unknownVersionOrShapeRefusesWithoutReset" classname="cn.onan.sentinel.MigrationTest" time="0.066"/>
+  <testcase name="interruptedUpgradeRollsBackAndCanRetryUsingSameBackup" classname="cn.onan.sentinel.MigrationTest" time="0.099"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

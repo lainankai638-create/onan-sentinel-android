@@ -1,0 +1,17 @@
+Verifies
+Verified using v1 scheme (JAR signing): false
+Verified using v2 scheme (APK Signature Scheme v2): true
+Verified using v3 scheme (APK Signature Scheme v3): false
+Verified using v3.1 scheme (APK Signature Scheme v3.1): false
+Verified using v4 scheme (APK Signature Scheme v4): false
+Verified for SourceStamp: false
+Number of signers: 1
+Signer #1 certificate DN: CN=Onan Sentinel P0 Test, O=Onan Sentinel, C=CN
+Signer #1 certificate SHA-256 digest: 6521d8fdfa4961f8db71a90249cb425822f74cb8ab0ca37ac4aa5ac7283c861e
+Signer #1 certificate SHA-1 digest: 3c81de155aa877674f75fadf83c8ea029e1fca09
+Signer #1 certificate MD5 digest: 06d495663c5b917b9b64124c28305506
+Signer #1 key algorithm: RSA
+Signer #1 key size (bits): 2048
+Signer #1 public key SHA-256 digest: aaf429f32c66c71f27e74df677e55d5f32789a4de2dee4c32f5a9cb28fad5a78
+Signer #1 public key SHA-1 digest: b601272135ace690756faa436f3280e9d2a99f25
+Signer #1 public key MD5 digest: 86a5673318fbd34cc3aaf1e018e45b89

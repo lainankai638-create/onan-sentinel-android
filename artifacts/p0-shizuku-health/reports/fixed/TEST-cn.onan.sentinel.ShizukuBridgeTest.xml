@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="cn.onan.sentinel.ShizukuBridgeTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-11-20T17:18:11" hostname="78cd01167455" time="0.233">
+  <properties/>
+  <testcase name="deadMainBinderTakesPrecedenceOverCachedGrant" classname="cn.onan.sentinel.ShizukuBridgeTest" time="0.047"/>
+  <testcase name="missingPermissionOrRootModeNeverBinds" classname="cn.onan.sentinel.ShizukuBridgeTest" time="0.017"/>
+  <testcase name="reconnectUsesNewEpochAndBindTimeoutHasBackoff" classname="cn.onan.sentinel.ShizukuBridgeTest" time="0.022"/>
+  <testcase name="revokeAfterReadRejectsCommitAndHealthWhilePausedRemainsAccurate" classname="cn.onan.sentinel.ShizukuBridgeTest" time="0.042"/>
+  <testcase name="unverifiableCachedGrantIsSeparateFromVerifiedPermission" classname="cn.onan.sentinel.ShizukuBridgeTest" time="0.025"/>
+  <testcase name="delayedCallbackFromReleasedBindCannotOverwriteNewConnection" classname="cn.onan.sentinel.ShizukuBridgeTest" time="0.019"/>
+  <testcase name="refreshingHealthNeverChangesConnectionOrRunsASample" classname="cn.onan.sentinel.ShizukuBridgeTest" time="0.023"/>
+  <testcase name="reconnectRejectsInFlightResultAndWaitsForNewEvidence" classname="cn.onan.sentinel.ShizukuBridgeTest" time="0.035"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

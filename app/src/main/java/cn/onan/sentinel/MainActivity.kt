@@ -41,6 +41,8 @@ class MainActivity : AppCompatActivity() {
     private var client: SnapshotClient? = null
     private var visible = false
     private var loading = false
+    private var reloadPending = false
+    private var diagnosis: SamplingDiagnosis? = null
     private var revision = 0
     private var state = "STOPPED"
     private var failure = ""
@@ -96,15 +98,25 @@ class MainActivity : AppCompatActivity() {
     override fun onBackPressed() { if(page!="overview") { nav.selectedItemId=R.id.tab_overview;go("overview") } else super.onBackPressed() }
     private fun go(next:String) { page=next;before=Long.MAX_VALUE;revision++;rows=emptyList();appMetadata="";draw();scroll.scrollTo(0,0);load() }
     private fun load() {
-        if(!visible || loading) return
-        loading=true
+        if (!visible) return
+        if (loading) { reloadPending = true; return }
+        loading = true
+        reloadPending = false
         val epoch=revision;val requestedPage=page;val requestedTarget=target;val requested=when(page) { "detail" -> EvidenceFilter(0,Long.MAX_VALUE,target);"sensitive" -> EvidenceFilter(0,Long.MAX_VALUE,source="SHIZUKU_APPOPS");else -> filter };val cursor=before
         io.execute { try {
             val newHealth=store.sourceHealth();val newState=if(MonitorService.live || MonitorService.runtimeStatus!="STOPPED") MonitorService.runtimeStatus else store.meta("state").ifEmpty { "STOPPED" }
             val newRows=if(requestedPage=="sensitive") Policy.targets.flatMap { store.events(requested.copy(target=it),1) } else store.events(requested,100,cursor)
             val metadata=if(requestedPage=="detail" && requestedTarget!=null) try { val info=packageManager.getPackageInfo(requestedTarget,0);"版本 ${info.versionName}\n系统分配的应用身份（UID）：${info.applicationInfo?.uid}" } catch(_:Exception) { "系统没有返回此应用的包元数据" } else ""
-            runOnUiThread { loading=false;if(visible && epoch==revision) { health=newHealth;state=newState;rows=newRows;appMetadata=metadata;failure="";draw() } else if(visible) load() }
-        } catch(e:Exception) { runOnUiThread { loading=false;failure=FailureReason.of(e);if(visible) draw() } } }
+            val newDiagnosis = MonitorService.samplingDiagnosis(store)
+            runOnUiThread {
+                loading = false
+                if (visible && epoch == revision) {
+                    health = newHealth; state = newState; rows = newRows; appMetadata = metadata
+                    diagnosis = newDiagnosis; failure = ""; draw()
+                }
+                if (visible && (reloadPending || epoch != revision)) load()
+            }
+        } catch(e:Exception) { runOnUiThread { loading=false;diagnosis=null;failure=FailureReason.of(e);if(visible) draw() } } }
     }
     private fun label(parent:LinearLayout,text:String,size:Float=16f):TextView = TextView(this).apply { this.text=text;textSize=size;setTextColor(getColor(R.color.sentinel_on_surface));setPadding(0,dp(6),0,dp(6));parent.addView(this) }
     private fun card(heading:String,content:String="",action:(LinearLayout.()->Unit)?=null) {
@@ -125,23 +137,63 @@ class MainActivity : AppCompatActivity() {
         when(page) { "overview"->overview();"processes"->processPage();"detail"->detail();"sensitive"->sensitive();"timeline"->timeline();"settings"->settings();"network"->networkPage();else->reportPage() }
     }
     private fun overview() {
-        card(Chinese.status(state),"间隔 ${prefs.getInt("intervalMinutes",5)} 分钟 · 仅本地保存\n定期观察不等于连续覆盖；变化不等于恶意行为。") {
+        val titleStatus = if (MonitorService.live && state != "PAUSED")
+            diagnosis?.status ?: "CONNECTING" else state
+        card(Chinese.status(titleStatus),"间隔 ${prefs.getInt("intervalMinutes",5)} 分钟 · 仅本地保存\n定期观察不等于连续覆盖；变化不等于恶意行为。") {
             button("启动 / 恢复监控") { startMonitoring() }
             if(MonitorService.live) { button("暂停采集") { command(MonitorService.PAUSE) };button("停止监控") { command(MonitorService.STOP) } }
             button("授权与监控设置") { go("settings") }
             button("资源能力诊断") { startActivity(Intent(this@MainActivity,ResourceDiagnosticActivity::class.java)) }
         }
+        diagnosis?.let { observed ->
+            card("Shizuku 连接诊断", listOf(
+                "主服务 · " + when (observed.link["binder"]) {
+                    "CONNECTED" -> "可用"
+                    "DISCONNECTED" -> "不可用"
+                    else -> "状态未知"
+                },
+                "授权 · " + when (observed.link["authorization"]) {
+                    "VERIFIED" -> "服务端已核实"
+                    "REPORTED_GRANTED" -> "客户端报告已授权，尚未独立核实"
+                    "REVOKED" -> "服务端判定授权已失效"
+                    "DENIED" -> "尚未授权"
+                    else -> "状态未知"
+                },
+                "UserService · " + when (observed.link["userService"]) {
+                    "BOUND" -> "Binder 已连接"
+                    "CONNECTING" -> "正在绑定"
+                    "FAILED" -> Chinese.status(observed.link["failure"].orEmpty())
+                    else -> "不可用"
+                }
+            ).joinToString("\n"))
+            if (MonitorService.live && state != "PAUSED" && observed.link["userService"] == "BOUND") {
+                card("当前连接的采样") {
+                    for (target in Policy.targets) for (source in shizukuSources) {
+                        val run = observed.runs[target to source]
+                        val result = when {
+                            run == null -> Chinese.status(observed.awaiting)
+                            run.valid -> "${Chinese.status(run.status)} · ${time(run.ended)}"
+                            run.hadValidSample && run.gap -> Chinese.status("SAMPLING_INTERRUPTED")
+                            else -> Chinese.status(run.status) +
+                                if (run.reason.isEmpty()) "" else " · ${Chinese.status(run.reason)}"
+                        }
+                        label(this, "${Chinese.target(target)} · ${Chinese.source(source)}\n$result")
+                    }
+                }
+            }
+        }
         card("证据覆盖范围","不代表全面安全检测。后台仅关注主用户的 3 个系统组件。进程可见状态与 AppOps 模式分别采样；不读取通信正文、不录音、不抓包。") {
             button("查看可见运行进程") { go("processes") };button("敏感操作模式") { go("sensitive") };button("网络统计实验") { go("network") }
         }
         if(health.isEmpty()) card("尚无来源采样记录","启动监控后才会产生成功时间、来源状态和空白期。")
+        if (health.isNotEmpty()) label(body, "历史来源记录", 19f)
         health.forEach { h -> card("${Chinese.target(h.target)} · ${Chinese.source(h.source)}","${Chinese.status(h.status)}\n最近成功：${time(h.lastSuccess)}\n${if(h.gap) "存在未结束的空白期，期间无有效证据" else "没有未关闭空白期记录，不代表连续覆盖"}") {
             button("原因与技术详情") { message("来源详情","${h.target}\n${h.source}\n${h.status}\n${Chinese.status(h.reason)}\n${h.reason}") }
         } }
     }
     private fun authorize() {
         try { if(!Shizuku.pingBinder()) message("Shizuku 尚未运行","请先在 Shizuku 中以无线调试方式启动服务，然后返回这里授权。")
-        else if(Shizuku.checkSelfPermission()==PackageManager.PERMISSION_GRANTED) toast("Shizuku 已授权") else Shizuku.requestPermission(12) }
+        else if(Shizuku.checkSelfPermission()==PackageManager.PERMISSION_GRANTED) toast("Shizuku 客户端报告已授权，请查看连接诊断") else Shizuku.requestPermission(12) }
         catch(e:Exception) { message("授权服务不可用",FailureReason.of(e)) }
     }
     private fun startMonitoring() {

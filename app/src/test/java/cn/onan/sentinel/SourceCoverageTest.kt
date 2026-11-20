@@ -13,6 +13,42 @@ import java.io.StringWriter
 @Config(sdk=[34],application=android.app.Application::class)
 @SQLiteMode(SQLiteMode.Mode.NATIVE)
 class SourceCoverageTest {
+    @Test fun firstFailedAttemptAndPartialCoverageAreScopedToTheExactTargetAndSource() {
+        EventStore(RuntimeEnvironment.getApplication()).use { store ->
+            val scope = SamplingScope("current", 2)
+            val target = Policy.targets.first()
+            val link = mapOf("availability" to "READY", "userService" to "BOUND")
+            fun diagnostic() = SamplingDiagnosis(link, store.currentSamplingRuns(scope))
+            store.recordSample("SHIZUKU_APPOPS", target, Evidence("DENIED", "APPOPS_PERMISSION_DENIED"),
+                "SAMPLE_UNAVAILABLE", 1, 2, scope.session, scope.generation)
+            assertEquals("CURRENT_SAMPLE_FAILED", diagnostic().status)
+
+            store.recordSample("SHIZUKU_PS", target, Evidence("OK", "NOT_OBSERVED_IN_PS"),
+                "BASELINE", 3, 4, scope.session, scope.generation)
+            assertEquals("CURRENT_SAMPLE_PARTIAL", diagnostic().status)
+            assertEquals(setOf(target to "SHIZUKU_PS"), diagnostic().runs.filterValues { it.valid }.keys)
+
+            store.recordSample("SHIZUKU_PS", target, Evidence("UNAVAILABLE", "COMMAND_TIMEOUT"),
+                "SAMPLE_UNAVAILABLE", 5, 6, scope.session, scope.generation)
+            assertEquals("SAMPLING_INTERRUPTED", diagnostic().status)
+        }
+    }
+
+    @Test fun oldSessionAndOldGenerationNeverSatisfyRecovery() {
+        EventStore(RuntimeEnvironment.getApplication()).use { store ->
+            val target = Policy.targets.first()
+            val scope = SamplingScope("new-session", 7)
+            for ((session, generation) in listOf(SamplingScope("old-session", 7), SamplingScope("new-session", 6))) {
+                store.recordSample("SHIZUKU_PS", target, Evidence("OK", "NOT_OBSERVED_IN_PS"),
+                    "BASELINE", 1, 2, session, generation)
+            }
+            val link = mapOf("availability" to "READY", "userService" to "BOUND", "reconnected" to "true")
+            val runs = store.currentSamplingRuns(scope)
+            assertTrue(runs.isEmpty())
+            assertEquals("AWAITING_RECOVERY_SAMPLE", SamplingDiagnosis(link, runs).status)
+        }
+    }
+
     @Test fun onlyRecoveredSourceClosesAndPartialSuccessDoesNotMaskOtherTargets() {
         EventStore(RuntimeEnvironment.getApplication()).use { s ->
             s.gap("START",1000);s.allSourcesUnavailable("START",1000,"OBSERVED_UNAVAILABLE")

@@ -16,14 +16,16 @@ import rikka.shizuku.Shizuku
 class ShizukuBridgeTest {
     private class Fake : ShizukuApi {
         var running=true;var granted=true;var shellUid=2000
-        val binds=mutableListOf<ServiceConnection>();var observers=0
+        val binds=mutableListOf<ServiceConnection>();var observers=0;var unbinds=0
+        var remotelyGranted=true
+        fun verifyPermission()=remotelyGranted
         lateinit var received: Shizuku.OnBinderReceivedListener
         lateinit var dead: Shizuku.OnBinderDeadListener
         override fun alive()=running
         override fun permission()=if(granted) PackageManager.PERMISSION_GRANTED else PackageManager.PERMISSION_DENIED
         override fun uid()=shellUid
         override fun bind(args: Shizuku.UserServiceArgs, connection: ServiceConnection) { binds+=connection }
-        override fun unbind(args: Shizuku.UserServiceArgs, connection: ServiceConnection) = Unit
+        override fun unbind(args: Shizuku.UserServiceArgs, connection: ServiceConnection) { unbinds++ }
         override fun observe(add: Boolean, received: Shizuku.OnBinderReceivedListener, dead: Shizuku.OnBinderDeadListener, permission: Shizuku.OnRequestPermissionResultListener) {
             this.received=received;this.dead=dead;observers+=if(add) 1 else -1
         }
@@ -46,7 +48,7 @@ class ShizukuBridgeTest {
         bridge.connect();api.deliver(0);val token=bridge.lease()!!.first
         api.granted=false;var writes=0
         assertFalse(bridge.accept(token) { writes++ });assertEquals(0,writes)
-        assertEquals("DENIED",bridge.health()["authorization"]);assertNull(bridge.remote)
+        assertEquals("DENIED",bridge.health()["authorization"]);assertEquals("SHIZUKU_PERMISSION_REQUIRED",bridge.connect());assertNull(bridge.remote)
         api.granted=true;bridge.connect();api.deliver(1)
         assertFalse(bridge.accept(token) { writes++ });assertTrue(bridge.accept(bridge.generation) { writes++ });assertEquals(1,writes)
     }
@@ -66,5 +68,31 @@ class ShizukuBridgeTest {
         api.running=true;api.granted=false;assertEquals("SHIZUKU_PERMISSION_REQUIRED",bridge.connect())
         api.granted=true;api.shellUid=0;assertEquals("SHIZUKU_ADB_SHELL_REQUIRED",bridge.connect())
         assertTrue(api.binds.isEmpty())
+    }
+    @Test fun refreshingHealthNeverChangesConnectionOrRunsASample() {
+        val api = Fake()
+        val bridge = ShizukuBridge(RuntimeEnvironment.getApplication(), api, { 0 }) { }
+        repeat(3) { assertEquals("UNBOUND", bridge.health()["userService"]) }
+        bridge.connect()
+        api.deliver(0)
+        val generation = bridge.generation
+        api.remotelyGranted = false
+        repeat(3) { assertEquals("REVOKED", bridge.health()["authorization"]) }
+        assertEquals(1, api.binds.size)
+        assertEquals(0, api.unbinds)
+        assertEquals(generation, bridge.generation)
+        assertFalse(bridge.accept(generation) { fail("Revoked sample committed") })
+    }
+
+    @Test fun deadMainBinderTakesPrecedenceOverCachedGrant() {
+        val api = Fake()
+        val bridge = ShizukuBridge(RuntimeEnvironment.getApplication(), api, { 0 }) { }
+        bridge.connect()
+        api.deliver(0)
+        api.running = false
+        assertEquals("DISCONNECTED", bridge.health()["binder"])
+        assertEquals("UNKNOWN", bridge.health()["authorization"])
+        assertEquals("SHIZUKU_NOT_RUNNING", bridge.health()["availability"])
+        assertEquals(0, api.unbinds)
     }
 }

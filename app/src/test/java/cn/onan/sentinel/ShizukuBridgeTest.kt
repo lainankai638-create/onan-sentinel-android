@@ -17,8 +17,9 @@ class ShizukuBridgeTest {
     private class Fake : ShizukuApi {
         var running=true;var granted=true;var shellUid=2000
         val binds=mutableListOf<ServiceConnection>();var observers=0;var unbinds=0
-        var remotelyGranted=true
-        fun verifyPermission()=remotelyGranted
+        var remotelyGranted: Boolean? = true
+        var samples = 0
+        override fun verifyPermission() = checkNotNull(remotelyGranted)
         lateinit var received: Shizuku.OnBinderReceivedListener
         lateinit var dead: Shizuku.OnBinderDeadListener
         override fun alive()=running
@@ -30,8 +31,8 @@ class ShizukuBridgeTest {
             this.received=received;this.dead=dead;observers+=if(add) 1 else -1
         }
         fun deliver(index: Int) = binds[index].onServiceConnected(ComponentName("test","service"), object:IReadOnlyProbe.Stub() {
-            override fun sample(kind:Int,target:Int)="{}"
-            override fun snapshot()="{}"
+            override fun sample(kind:Int,target:Int): String { samples++; return "{}" }
+            override fun snapshot(): String { samples++; return "{}" }
             override fun resources()="{}"
             override fun destroy()=Unit
         })
@@ -56,6 +57,7 @@ class ShizukuBridgeTest {
         val api=Fake();var now=0L;val bridge=ShizukuBridge(RuntimeEnvironment.getApplication(),api,{now}) { }
         bridge.start();bridge.connect();now=15000
         assertEquals("USER_SERVICE_BIND_TIMEOUT",bridge.connect())
+        assertEquals("USER_SERVICE_BIND_TIMEOUT", SamplingDiagnosis(bridge.health(), emptyMap()).status)
         repeat(10) { assertEquals("USER_SERVICE_RETRY_BACKOFF",bridge.connect()) };assertEquals(1,api.binds.size)
         now=18000;bridge.connect();api.deliver(1);val before=bridge.generation
         api.running=false;api.dead.onBinderDead();assertNull(bridge.remote)
@@ -81,6 +83,7 @@ class ShizukuBridgeTest {
         assertEquals(1, api.binds.size)
         assertEquals(0, api.unbinds)
         assertEquals(generation, bridge.generation)
+        assertEquals(0, api.samples)
         assertFalse(bridge.accept(generation) { fail("Revoked sample committed") })
     }
 
@@ -94,5 +97,29 @@ class ShizukuBridgeTest {
         assertEquals("UNKNOWN", bridge.health()["authorization"])
         assertEquals("SHIZUKU_NOT_RUNNING", bridge.health()["availability"])
         assertEquals(0, api.unbinds)
+    }
+    @Test fun unverifiableCachedGrantIsSeparateFromVerifiedPermission() {
+        val api = Fake().apply { remotelyGranted = null }
+        val bridge = ShizukuBridge(RuntimeEnvironment.getApplication(), api, { 0 }) { }
+        assertEquals("REPORTED_GRANTED", bridge.health()["authorization"])
+        assertEquals("SHIZUKU_AUTHORIZATION_UNVERIFIED", bridge.connect())
+        assertTrue(api.binds.isEmpty())
+    }
+
+    @Test fun reconnectRejectsInFlightResultAndWaitsForNewEvidence() {
+        val api = Fake()
+        val bridge = ShizukuBridge(RuntimeEnvironment.getApplication(), api, { 0 }) { }
+        bridge.start()
+        assertEquals("USER_SERVICE_CONNECTING", bridge.connect())
+        assertEquals("USER_SERVICE_CONNECTING", SamplingDiagnosis(bridge.health(), emptyMap()).status)
+        api.deliver(0)
+        val old = bridge.lease()!!.first
+        assertEquals("AWAITING_FIRST_VALID_SAMPLE", SamplingDiagnosis(bridge.health(), emptyMap()).status)
+        api.dead.onBinderDead()
+        api.received.onBinderReceived()
+        bridge.connect()
+        api.deliver(1)
+        assertFalse(bridge.accept(old) { fail("Late old result entered the new session") })
+        assertEquals("AWAITING_RECOVERY_SAMPLE", SamplingDiagnosis(bridge.health(), emptyMap()).status)
     }
 }

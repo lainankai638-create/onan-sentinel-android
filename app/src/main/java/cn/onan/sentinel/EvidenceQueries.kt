@@ -26,6 +26,58 @@ fun EventStore.sourceHealth():List<SourceHealth> = synchronized(this) {
         buildList { while(c.moveToNext()) add(SourceHealth(c.getString(0),c.getString(1),c.getString(2),c.getString(3),if(c.isNull(4)) null else c.getLong(4),!c.isNull(5))) }
     }
 }
+internal val shizukuSources = listOf("SHIZUKU_PS", "SHIZUKU_APPOPS")
+internal data class SamplingScope(val session: String, val generation: Long)
+internal data class SamplingRun(val status: String, val reason: String, val ended: Long,
+    val hadValidSample: Boolean, val gap: Boolean) {
+    val valid get() = status in setOf("OK", "PARTIAL") && !gap
+}
+
+internal fun EventStore.currentSamplingRuns(scope: SamplingScope): Map<Pair<String, String>, SamplingRun> =
+    synchronized(this) {
+        readableDatabase.rawQuery(
+            """
+            SELECT run.target, run.source, run.status, run.reason, run.ended, latest.had_valid, state.open_gap_id
+            FROM collection_runs AS run
+            JOIN (
+                SELECT MAX(id) AS id, MAX(CASE WHEN status IN ('OK','PARTIAL') THEN 1 ELSE 0 END) AS had_valid
+                FROM collection_runs WHERE session=? AND generation=? GROUP BY target, source
+            ) AS latest ON run.id=latest.id
+            LEFT JOIN source_state AS state ON state.source=run.source AND state.target=run.target
+            """.trimIndent(), arrayOf(scope.session, scope.generation.toString())
+        ).use { cursor ->
+            buildMap {
+                while (cursor.moveToNext()) put(cursor.getString(0) to cursor.getString(1),
+                    SamplingRun(cursor.getString(2), cursor.getString(3), cursor.getLong(4),
+                        cursor.getInt(5) != 0, !cursor.isNull(6)))
+            }
+        }
+    }
+
+internal data class SamplingDiagnosis(val link: Map<String, String>, val runs: Map<Pair<String, String>, SamplingRun>) {
+    val awaiting get() = if (link["reconnected"] == "true") "AWAITING_RECOVERY_SAMPLE" else "AWAITING_FIRST_VALID_SAMPLE"
+    val status: String get() {
+        val availability = link["availability"] ?: "SHIZUKU_BINDER_UNAVAILABLE"
+        if (availability != "READY") return availability
+        return when (link["userService"]) {
+            "CONNECTING" -> "USER_SERVICE_CONNECTING"
+            "FAILED" -> link.getValue("failure")
+            "BOUND" -> {
+                val expected = Policy.targets.flatMap { target -> shizukuSources.map { runs[target to it] } }
+                val valid = expected.count { it?.valid == true }
+                when {
+                    valid == expected.size -> "CURRENT_SAMPLE_VALID"
+                    valid > 0 -> "CURRENT_SAMPLE_PARTIAL"
+                    expected.any { it?.hadValidSample == true } -> "SAMPLING_INTERRUPTED"
+                    expected.any { it != null } -> "CURRENT_SAMPLE_FAILED"
+                    else -> awaiting
+                }
+            }
+            else -> "USER_SERVICE_NOT_BOUND"
+        }
+    }
+}
+
 fun EventStore.events(filter:EvidenceFilter,limit:Int=100,before:Long=Long.MAX_VALUE):List<Event> = synchronized(this) {
     val (where,args)=filter.where()
     readableDatabase.rawQuery("SELECT id,timestamp,target,type,source,status,evidence FROM events WHERE $where AND id<? ORDER BY id DESC LIMIT ?",args+arrayOf(before.toString(),limit.coerceIn(1,500).toString())).use { c ->
@@ -47,6 +99,7 @@ object Chinese {
         "SOURCE_CALL_STILL_RUNNING" to "上一次采集尚未结束", "PS_FORMAT_UNKNOWN" to "无法识别进程列表格式",
         "APPOPS_FORMAT_UNKNOWN" to "无法识别系统操作格式", "OUTPUT_LIMIT_OR_READ_FAILURE" to "输出过大或读取失败",
         "COMMAND_TIMEOUT" to "系统命令读取超时", "COMMAND_EXECUTION_FAILED" to "系统命令不可读取",
+        "SHIZUKU_LOST_DURING_BATCH" to "本轮采样期间 Shizuku 连接或授权中断",
         "AUTHORIZATION_CHANGED" to "授权已变化，请重新采样", "NOTIFICATION_PERMISSION_REQUIRED" to "需要允许运行通知",
         "NOTIFICATIONS_DISABLED" to "运行通知被关闭", "USER_PAUSED" to "用户暂停了采集", "USER_STOPPED" to "用户停止了监测",
         "VISIBLE_SNAPSHOT_ONLY" to "本次可见快照", "NO_RECORDED_OPERATIONS" to "未返回操作记录", "TIMEOUT" to "读取超时",
@@ -60,6 +113,16 @@ object Chinese {
         "NO_BUCKETS" to "系统未返回统计桶", "EXPERIMENT_DISABLED" to "网络统计实验已关闭", "USAGE_ACCESS_REQUIRED" to "需要使用情况访问权限",
         "STORAGE_FAILURE" to "本地存储不可用", "LOCAL_STORAGE_FULL" to "本地存储空间不足", "MIGRATION_SPACE_REQUIRED" to "升级备份所需空间不足",
         "NETWORK_STATS_UNSUPPORTED" to "系统统计不可读取或不支持", "NETWORK_BUCKET_INVALID" to "统计桶格式不受支持", "USAGE_ACCESS_DENIED" to "系统拒绝统计访问", "NETWORK_QUERY_TIMEOUT" to "系统统计查询超时",
+        "SHIZUKU_AUTHORIZATION_UNVERIFIED" to "客户端报告已授权，服务端尚未核实",
+        "AWAITING_FIRST_VALID_SAMPLE" to "采集服务已连接，等待首次有效采样",
+        "AWAITING_RECOVERY_SAMPLE" to "采集服务已重连，等待新的有效样本",
+        "USER_SERVICE_NOT_BOUND" to "只读采集服务尚未绑定",
+        "USER_SERVICE_BINDING_DIED" to "只读采集服务连接已失效",
+        "USER_SERVICE_NULL_BINDING" to "采集服务返回空连接",
+        "CURRENT_SAMPLE_VALID" to "本会话所有指定目标和来源均有有效样本",
+        "CURRENT_SAMPLE_PARTIAL" to "本会话只有部分目标和来源有有效样本",
+        "CURRENT_SAMPLE_FAILED" to "采样未成功，尚无本会话有效样本",
+        "SAMPLING_INTERRUPTED" to "本会话采样已中断",
         "READY" to "采集服务已就绪", "APPOPS_PERMISSION_DENIED" to "系统拒绝读取操作模式", "TARGET_NOT_AVAILABLE_FOR_USER_0" to "当前主用户没有此组件", "SYSTEM_BUCKETS_NOT_PACKETS" to "系统统计桶，不是网络抓包")
     fun status(code:String)=states[code]?:if(code.startsWith("COMMAND_EXIT_")) "系统命令返回错误" else "状态待核查"
     fun source(code:String)=when(code) { "SHIZUKU_PS"->"进程快照";"SHIZUKU_APPOPS"->"系统操作模式";"SHIZUKU_BINDER"->"授权连接";"APP_LIFECYCLE"->"监测会话";"NETWORK_STATS_WIFI"->"Wi-Fi 系统统计";"NETWORK_STATS_MOBILE"->"移动网络系统统计";else->"其他来源" }

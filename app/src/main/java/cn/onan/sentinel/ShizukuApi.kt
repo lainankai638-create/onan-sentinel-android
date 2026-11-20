@@ -2,10 +2,12 @@ package cn.onan.sentinel
 
 import android.content.ServiceConnection
 import rikka.shizuku.Shizuku
+import moe.shizuku.server.IShizukuService
 
 /** Narrow platform adapter: permits deterministic lifecycle tests without a privileged service. */
 interface ShizukuApi {
     fun alive(): Boolean
+    fun verifyPermission(): Boolean
     fun permission(): Int
     fun uid(): Int
     fun bind(args: Shizuku.UserServiceArgs, connection: ServiceConnection)
@@ -15,6 +17,9 @@ interface ShizukuApi {
 }
 object PlatformShizukuApi : ShizukuApi {
     override fun alive() = Shizuku.pingBinder()
+    // The SDK's checkSelfPermission() can return a cached grant.
+    override fun verifyPermission(): Boolean =
+        IShizukuService.Stub.asInterface(checkNotNull(Shizuku.getBinder())).checkSelfPermission()
     override fun permission() = Shizuku.checkSelfPermission()
     override fun uid() = Shizuku.getUid()
     override fun bind(args: Shizuku.UserServiceArgs, connection: ServiceConnection) = Shizuku.bindUserService(args,connection)
